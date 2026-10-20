@@ -1,0 +1,21 @@
+{
+  "title": "Localized Dark Shunt Quenching",
+  "defectCategory": "DARK_INACTIVE_SHUNT",
+  "severity": "MEDIUM",
+  "maintenancePriority": "MEDIUM",
+  "anomalyScore": 48.5,
+  "inactiveAreaPercent": 2.4,
+  "crackPixelCount": 65,
+  "description": "High-conductance localized shunting channel quenching radiative carrier recombination in surrounding silicon matrix.",
+  "whyFlagged": "Severe localized luminescence quenching; parasitic shunt drawing leakage current.",
+  "recommendedAction": "Perform Infrared Thermography (IRT) cross-check to evaluate if shunt generates a thermal dissipation hotspot.",
+  "box": {
+    "x": 300,
+    "y": 420,
+    "width": 120,
+    "height": 120
+  },
+  "cellType": "Polycrystalline 72-cell",
+  "name": "el_dark_shunt_quenched",
+  "filename": "el_dark_shunt_quenched.png"
+}

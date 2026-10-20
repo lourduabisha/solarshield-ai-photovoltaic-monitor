@@ -1,0 +1,13 @@
+{
+  "filename": "electrical_iv_bypass_diode.csv",
+  "title": "Bypass Diode Activation (Step at 27V)",
+  "panelId": "SP-002",
+  "description": "Pronounced step/notch in I-V curve caused by 1 shaded or cracked sub-string.",
+  "expectedAnomaly": "BYPASS_DIODE_CONDUCTION",
+  "irradiance": 1000.0,
+  "panelTemp": 25.0,
+  "source": "IV_CURVE_TRACER_HT",
+  "pointsCount": 26,
+  "nominalVoc": 49.5,
+  "nominalIsc": 10.85
+}

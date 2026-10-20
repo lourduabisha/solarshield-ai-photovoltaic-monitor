@@ -1,0 +1,24 @@
+{
+  "name": "thermal_uniform_nominal",
+  "filename": "thermal_uniform_nominal.png",
+  "matrixFile": "thermal_uniform_nominal_matrix.npy",
+  "tMin": 29.6,
+  "tMax": 44.5,
+  "tAvg": 40.0,
+  "tNominal": 41.0,
+  "deltaT": 3.6,
+  "emissivity": 0.95,
+  "ambientTemp": 25.0,
+  "calibrationSpanMin": 25.0,
+  "calibrationSpanMax": 75.0,
+  "anomalyType": "UNIFORM_NOMINAL",
+  "box": {
+    "x": 0,
+    "y": 0,
+    "width": 0,
+    "height": 0
+  },
+  "description": "Nominal thermal distribution across module without significant gradient.",
+  "iecClass": "Class 1 (Minor / Nominal)",
+  "severity": "LOW"
+}

@@ -1,0 +1,13 @@
+{
+  "filename": "electrical_iv_high_rs.csv",
+  "title": "High Series Resistance (Ribbon Degradation)",
+  "panelId": "SP-004",
+  "description": "Softened curve knee caused by elevated internal series resistance (corroded ribbons).",
+  "expectedAnomaly": "HIGH_SERIES_RESISTANCE",
+  "irradiance": 1000.0,
+  "panelTemp": 32.0,
+  "source": "SEAWARD_PV200",
+  "pointsCount": 26,
+  "nominalVoc": 49.5,
+  "nominalIsc": 10.85
+}

@@ -1,0 +1,24 @@
+{
+  "name": "thermal_hotspot_cell",
+  "filename": "thermal_hotspot_cell.png",
+  "matrixFile": "thermal_hotspot_cell_matrix.npy",
+  "tMin": 28.9,
+  "tMax": 71.2,
+  "tAvg": 40.3,
+  "tNominal": 41.0,
+  "deltaT": 30.2,
+  "emissivity": 0.95,
+  "ambientTemp": 25.0,
+  "calibrationSpanMin": 25.0,
+  "calibrationSpanMax": 75.0,
+  "anomalyType": "HOTSPOT",
+  "box": {
+    "x": 547,
+    "y": 190,
+    "width": 80,
+    "height": 80
+  },
+  "description": "Localized cell hotspot with high thermal gradient in monocrystalline wafer.",
+  "iecClass": "Class 2 (Significant)",
+  "severity": "HIGH"
+}

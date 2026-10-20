@@ -1,0 +1,30 @@
+# SolarShield Calibrated Electrical Measurement Dataset
+# Title: Nominal PERC 420W (STC 1000 W/m²)
+# Panel: SP-001 | Irradiance: 1000.0 W/m2 | Temperature: 25.0 °C
+point_index,voltage_v,current_a,measured_power_w,irradiance_wm2,panel_temp_c,panel_id,source,notes
+1,0.0,10.85,0.0,1000.0,25.0,SP-001,IV_CURVE_TRACER_HT,Calibrated STC benchmark sweep. Clear sky.
+2,1.98,10.85,21.48,1000.0,25.0,SP-001,IV_CURVE_TRACER_HT,Calibrated STC benchmark sweep. Clear sky.
+3,3.96,10.85,42.96,1000.0,25.0,SP-001,IV_CURVE_TRACER_HT,Calibrated STC benchmark sweep. Clear sky.
+4,5.94,10.85,64.42,1000.0,25.0,SP-001,IV_CURVE_TRACER_HT,Calibrated STC benchmark sweep. Clear sky.
+5,7.92,10.84,85.89,1000.0,25.0,SP-001,IV_CURVE_TRACER_HT,Calibrated STC benchmark sweep. Clear sky.
+6,9.9,10.84,107.34,1000.0,25.0,SP-001,IV_CURVE_TRACER_HT,Calibrated STC benchmark sweep. Clear sky.
+7,11.88,10.84,128.77,1000.0,25.0,SP-001,IV_CURVE_TRACER_HT,Calibrated STC benchmark sweep. Clear sky.
+8,13.86,10.84,150.18,1000.0,25.0,SP-001,IV_CURVE_TRACER_HT,Calibrated STC benchmark sweep. Clear sky.
+9,15.84,10.83,171.55,1000.0,25.0,SP-001,IV_CURVE_TRACER_HT,Calibrated STC benchmark sweep. Clear sky.
+10,17.82,10.82,192.85,1000.0,25.0,SP-001,IV_CURVE_TRACER_HT,Calibrated STC benchmark sweep. Clear sky.
+11,19.8,10.81,214.05,1000.0,25.0,SP-001,IV_CURVE_TRACER_HT,Calibrated STC benchmark sweep. Clear sky.
+12,21.78,10.8,235.12,1000.0,25.0,SP-001,IV_CURVE_TRACER_HT,Calibrated STC benchmark sweep. Clear sky.
+13,23.76,10.77,256.01,1000.0,25.0,SP-001,IV_CURVE_TRACER_HT,Calibrated STC benchmark sweep. Clear sky.
+14,25.74,10.75,276.65,1000.0,25.0,SP-001,IV_CURVE_TRACER_HT,Calibrated STC benchmark sweep. Clear sky.
+15,27.72,10.71,296.96,1000.0,25.0,SP-001,IV_CURVE_TRACER_HT,Calibrated STC benchmark sweep. Clear sky.
+16,29.7,10.67,316.85,1000.0,25.0,SP-001,IV_CURVE_TRACER_HT,Calibrated STC benchmark sweep. Clear sky.
+17,31.68,10.61,336.2,1000.0,25.0,SP-001,IV_CURVE_TRACER_HT,Calibrated STC benchmark sweep. Clear sky.
+18,33.66,10.54,354.88,1000.0,25.0,SP-001,IV_CURVE_TRACER_HT,Calibrated STC benchmark sweep. Clear sky.
+19,35.64,10.46,372.73,1000.0,25.0,SP-001,IV_CURVE_TRACER_HT,Calibrated STC benchmark sweep. Clear sky.
+20,37.62,10.36,389.58,1000.0,25.0,SP-001,IV_CURVE_TRACER_HT,Calibrated STC benchmark sweep. Clear sky.
+21,39.6,10.23,405.2,1000.0,25.0,SP-001,IV_CURVE_TRACER_HT,Calibrated STC benchmark sweep. Clear sky.
+22,41.58,10.12,420.79,1000.0,25.0,SP-001,IV_CURVE_TRACER_HT,Calibrated STC benchmark sweep. Clear sky.
+23,43.56,10.12,440.83,1000.0,25.0,SP-001,IV_CURVE_TRACER_HT,Calibrated STC benchmark sweep. Clear sky.
+24,45.54,10.1,459.88,1000.0,25.0,SP-001,IV_CURVE_TRACER_HT,Calibrated STC benchmark sweep. Clear sky.
+25,47.52,9.34,443.7,1000.0,25.0,SP-001,IV_CURVE_TRACER_HT,Calibrated STC benchmark sweep. Clear sky.
+26,49.5,0.0,0.0,1000.0,25.0,SP-001,IV_CURVE_TRACER_HT,Calibrated STC benchmark sweep. Clear sky.

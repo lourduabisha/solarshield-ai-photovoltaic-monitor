@@ -1,0 +1,21 @@
+{
+  "title": "Broken Cell-Finger & Interconnect Failure",
+  "defectCategory": "BROKEN_FINGER_INTERCONNECT",
+  "severity": "MEDIUM",
+  "maintenancePriority": "MEDIUM",
+  "anomalyScore": 54.2,
+  "inactiveAreaPercent": 3.8,
+  "crackPixelCount": 110,
+  "description": "Front-contact silver grid finger interruptions causing localized current crowding and dark horizontal stripes.",
+  "whyFlagged": "Interrupted finger metallization grid between busbar 1 and 2 resulting in localized carrier attenuation.",
+  "recommendedAction": "Measure module series resistance (Rs) via flash test; inspect front glass for micro-impact trauma.",
+  "box": {
+    "x": 210,
+    "y": 280,
+    "width": 180,
+    "height": 266
+  },
+  "cellType": "Mono-Si PERC M10",
+  "name": "el_finger_interconnect_break",
+  "filename": "el_finger_interconnect_break.png"
+}

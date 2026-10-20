@@ -1,0 +1,13 @@
+{
+  "filename": "electrical_iv_nominal.csv",
+  "title": "Nominal PERC 420W (STC 1000 W/m\u00b2)",
+  "panelId": "SP-001",
+  "description": "Uniform cell current, standard Fill Factor ~0.78, no diode activation steps.",
+  "expectedAnomaly": "NOMINAL_OPERATION",
+  "irradiance": 1000.0,
+  "panelTemp": 25.0,
+  "source": "IV_CURVE_TRACER_HT",
+  "pointsCount": 26,
+  "nominalVoc": 49.5,
+  "nominalIsc": 10.85
+}

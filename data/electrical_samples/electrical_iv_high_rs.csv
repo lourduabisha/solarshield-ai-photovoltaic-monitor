@@ -1,0 +1,30 @@
+# SolarShield Calibrated Electrical Measurement Dataset
+# Title: High Series Resistance (Ribbon Degradation)
+# Panel: SP-004 | Irradiance: 1000.0 W/m2 | Temperature: 32.0 °C
+point_index,voltage_v,current_a,measured_power_w,irradiance_wm2,panel_temp_c,panel_id,source,notes
+1,0.0,10.85,0.0,1000.0,32.0,SP-004,SEAWARD_PV200,Degraded fill factor ~0.61 with soft knee curve and ribbon corrosion.
+2,1.98,10.85,21.48,1000.0,32.0,SP-004,SEAWARD_PV200,Degraded fill factor ~0.61 with soft knee curve and ribbon corrosion.
+3,3.96,10.84,42.95,1000.0,32.0,SP-004,SEAWARD_PV200,Degraded fill factor ~0.61 with soft knee curve and ribbon corrosion.
+4,5.94,10.84,64.4,1000.0,32.0,SP-004,SEAWARD_PV200,Degraded fill factor ~0.61 with soft knee curve and ribbon corrosion.
+5,7.92,10.84,85.83,1000.0,32.0,SP-004,SEAWARD_PV200,Degraded fill factor ~0.61 with soft knee curve and ribbon corrosion.
+6,9.9,10.83,107.2,1000.0,32.0,SP-004,SEAWARD_PV200,Degraded fill factor ~0.61 with soft knee curve and ribbon corrosion.
+7,11.88,10.81,128.48,1000.0,32.0,SP-004,SEAWARD_PV200,Degraded fill factor ~0.61 with soft knee curve and ribbon corrosion.
+8,13.86,10.79,149.57,1000.0,32.0,SP-004,SEAWARD_PV200,Degraded fill factor ~0.61 with soft knee curve and ribbon corrosion.
+9,15.84,10.76,170.37,1000.0,32.0,SP-004,SEAWARD_PV200,Degraded fill factor ~0.61 with soft knee curve and ribbon corrosion.
+10,17.82,10.7,190.69,1000.0,32.0,SP-004,SEAWARD_PV200,Degraded fill factor ~0.61 with soft knee curve and ribbon corrosion.
+11,19.8,10.62,210.3,1000.0,32.0,SP-004,SEAWARD_PV200,Degraded fill factor ~0.61 with soft knee curve and ribbon corrosion.
+12,21.78,10.51,228.89,1000.0,32.0,SP-004,SEAWARD_PV200,Degraded fill factor ~0.61 with soft knee curve and ribbon corrosion.
+13,23.76,10.36,246.07,1000.0,32.0,SP-004,SEAWARD_PV200,Degraded fill factor ~0.61 with soft knee curve and ribbon corrosion.
+14,25.74,10.15,261.34,1000.0,32.0,SP-004,SEAWARD_PV200,Degraded fill factor ~0.61 with soft knee curve and ribbon corrosion.
+15,27.72,9.89,274.08,1000.0,32.0,SP-004,SEAWARD_PV200,Degraded fill factor ~0.61 with soft knee curve and ribbon corrosion.
+16,29.7,9.55,283.55,1000.0,32.0,SP-004,SEAWARD_PV200,Degraded fill factor ~0.61 with soft knee curve and ribbon corrosion.
+17,31.68,9.12,288.86,1000.0,32.0,SP-004,SEAWARD_PV200,Degraded fill factor ~0.61 with soft knee curve and ribbon corrosion.
+18,33.66,8.58,288.97,1000.0,32.0,SP-004,SEAWARD_PV200,Degraded fill factor ~0.61 with soft knee curve and ribbon corrosion.
+19,35.64,8.07,287.69,1000.0,32.0,SP-004,SEAWARD_PV200,Degraded fill factor ~0.61 with soft knee curve and ribbon corrosion.
+20,37.62,7.36,276.97,1000.0,32.0,SP-004,SEAWARD_PV200,Degraded fill factor ~0.61 with soft knee curve and ribbon corrosion.
+21,39.6,6.43,254.46,1000.0,32.0,SP-004,SEAWARD_PV200,Degraded fill factor ~0.61 with soft knee curve and ribbon corrosion.
+22,41.58,5.34,222.06,1000.0,32.0,SP-004,SEAWARD_PV200,Degraded fill factor ~0.61 with soft knee curve and ribbon corrosion.
+23,43.56,4.14,180.3,1000.0,32.0,SP-004,SEAWARD_PV200,Degraded fill factor ~0.61 with soft knee curve and ribbon corrosion.
+24,45.54,2.84,129.36,1000.0,32.0,SP-004,SEAWARD_PV200,Degraded fill factor ~0.61 with soft knee curve and ribbon corrosion.
+25,47.52,1.46,69.28,1000.0,32.0,SP-004,SEAWARD_PV200,Degraded fill factor ~0.61 with soft knee curve and ribbon corrosion.
+26,49.5,0.0,0.0,1000.0,32.0,SP-004,SEAWARD_PV200,Degraded fill factor ~0.61 with soft knee curve and ribbon corrosion.

@@ -1,0 +1,30 @@
+# SolarShield Calibrated Electrical Measurement Dataset
+# Title: Uniform Soiling / Dust (35% Current Loss)
+# Panel: SP-003 | Irradiance: 1000.0 W/m2 | Temperature: 26.5 °C
+point_index,voltage_v,current_a,measured_power_w,irradiance_wm2,panel_temp_c,panel_id,source,notes
+1,0.0,7.05,0.0,1000.0,26.5,SP-003,IV_CURVE_TRACER_HT,Uniform surface dust accumulation causing 35% current reduction.
+2,1.96,7.05,13.81,1000.0,26.5,SP-003,IV_CURVE_TRACER_HT,Uniform surface dust accumulation causing 35% current reduction.
+3,3.92,7.05,27.62,1000.0,26.5,SP-003,IV_CURVE_TRACER_HT,Uniform surface dust accumulation causing 35% current reduction.
+4,5.88,7.05,41.42,1000.0,26.5,SP-003,IV_CURVE_TRACER_HT,Uniform surface dust accumulation causing 35% current reduction.
+5,7.84,7.04,55.22,1000.0,26.5,SP-003,IV_CURVE_TRACER_HT,Uniform surface dust accumulation causing 35% current reduction.
+6,9.8,7.04,69.0,1000.0,26.5,SP-003,IV_CURVE_TRACER_HT,Uniform surface dust accumulation causing 35% current reduction.
+7,11.76,7.04,82.77,1000.0,26.5,SP-003,IV_CURVE_TRACER_HT,Uniform surface dust accumulation causing 35% current reduction.
+8,13.72,7.04,96.52,1000.0,26.5,SP-003,IV_CURVE_TRACER_HT,Uniform surface dust accumulation causing 35% current reduction.
+9,15.68,7.03,110.24,1000.0,26.5,SP-003,IV_CURVE_TRACER_HT,Uniform surface dust accumulation causing 35% current reduction.
+10,17.64,7.02,123.92,1000.0,26.5,SP-003,IV_CURVE_TRACER_HT,Uniform surface dust accumulation causing 35% current reduction.
+11,19.6,7.02,137.53,1000.0,26.5,SP-003,IV_CURVE_TRACER_HT,Uniform surface dust accumulation causing 35% current reduction.
+12,21.56,7.01,151.05,1000.0,26.5,SP-003,IV_CURVE_TRACER_HT,Uniform surface dust accumulation causing 35% current reduction.
+13,23.52,6.99,164.45,1000.0,26.5,SP-003,IV_CURVE_TRACER_HT,Uniform surface dust accumulation causing 35% current reduction.
+14,25.48,6.97,177.68,1000.0,26.5,SP-003,IV_CURVE_TRACER_HT,Uniform surface dust accumulation causing 35% current reduction.
+15,27.44,6.95,190.71,1000.0,26.5,SP-003,IV_CURVE_TRACER_HT,Uniform surface dust accumulation causing 35% current reduction.
+16,29.4,6.92,203.46,1000.0,26.5,SP-003,IV_CURVE_TRACER_HT,Uniform surface dust accumulation causing 35% current reduction.
+17,31.36,6.88,215.86,1000.0,26.5,SP-003,IV_CURVE_TRACER_HT,Uniform surface dust accumulation causing 35% current reduction.
+18,33.32,6.84,227.82,1000.0,26.5,SP-003,IV_CURVE_TRACER_HT,Uniform surface dust accumulation causing 35% current reduction.
+19,35.28,6.78,239.25,1000.0,26.5,SP-003,IV_CURVE_TRACER_HT,Uniform surface dust accumulation causing 35% current reduction.
+20,37.24,6.71,250.03,1000.0,26.5,SP-003,IV_CURVE_TRACER_HT,Uniform surface dust accumulation causing 35% current reduction.
+21,39.2,6.63,260.03,1000.0,26.5,SP-003,IV_CURVE_TRACER_HT,Uniform surface dust accumulation causing 35% current reduction.
+22,41.16,6.58,270.83,1000.0,26.5,SP-003,IV_CURVE_TRACER_HT,Uniform surface dust accumulation causing 35% current reduction.
+23,43.12,6.58,283.72,1000.0,26.5,SP-003,IV_CURVE_TRACER_HT,Uniform surface dust accumulation causing 35% current reduction.
+24,45.08,6.55,295.43,1000.0,26.5,SP-003,IV_CURVE_TRACER_HT,Uniform surface dust accumulation causing 35% current reduction.
+25,47.04,5.92,278.47,1000.0,26.5,SP-003,IV_CURVE_TRACER_HT,Uniform surface dust accumulation causing 35% current reduction.
+26,49.0,0.0,0.0,1000.0,26.5,SP-003,IV_CURVE_TRACER_HT,Uniform surface dust accumulation causing 35% current reduction.

@@ -1,0 +1,15 @@
+{
+  "title": "Nominal Monocrystalline Silicon Cell",
+  "defectCategory": "UNIFORM_NOMINAL_EMISSION",
+  "severity": "LOW",
+  "maintenancePriority": "LOW",
+  "anomalyScore": 6.8,
+  "inactiveAreaPercent": 0.0,
+  "crackPixelCount": 0,
+  "description": "Uniform near-infrared luminescence across crystalline wafer. Intact busbars and front finger grid; no microcracks or dark shunts.",
+  "whyFlagged": "Nominal radiative carrier recombination across entire active silicon area.",
+  "recommendedAction": "Maintain standard periodic operational surveillance.",
+  "cellType": "Mono-Si PERC M10 (182mm)",
+  "name": "el_nominal_cell",
+  "filename": "el_nominal_cell.png"
+}

@@ -1,0 +1,30 @@
+# SolarShield Calibrated Electrical Measurement Dataset
+# Title: Bypass Diode Activation (Step at 27V)
+# Panel: SP-002 | Irradiance: 1000.0 W/m2 | Temperature: 25.0 °C
+point_index,voltage_v,current_a,measured_power_w,irradiance_wm2,panel_temp_c,panel_id,source,notes
+1,0.0,10.85,0.0,1000.0,25.0,SP-002,IV_CURVE_TRACER_HT,Step at 27V indicating 1 sub-string bypass diode conduction.
+2,1.98,10.85,21.48,1000.0,25.0,SP-002,IV_CURVE_TRACER_HT,Step at 27V indicating 1 sub-string bypass diode conduction.
+3,3.96,10.85,42.95,1000.0,25.0,SP-002,IV_CURVE_TRACER_HT,Step at 27V indicating 1 sub-string bypass diode conduction.
+4,5.94,10.84,64.4,1000.0,25.0,SP-002,IV_CURVE_TRACER_HT,Step at 27V indicating 1 sub-string bypass diode conduction.
+5,7.92,10.84,85.85,1000.0,25.0,SP-002,IV_CURVE_TRACER_HT,Step at 27V indicating 1 sub-string bypass diode conduction.
+6,9.9,10.84,107.28,1000.0,25.0,SP-002,IV_CURVE_TRACER_HT,Step at 27V indicating 1 sub-string bypass diode conduction.
+7,11.88,10.83,128.69,1000.0,25.0,SP-002,IV_CURVE_TRACER_HT,Step at 27V indicating 1 sub-string bypass diode conduction.
+8,13.86,10.83,150.07,1000.0,25.0,SP-002,IV_CURVE_TRACER_HT,Step at 27V indicating 1 sub-string bypass diode conduction.
+9,15.84,10.82,171.4,1000.0,25.0,SP-002,IV_CURVE_TRACER_HT,Step at 27V indicating 1 sub-string bypass diode conduction.
+10,17.82,10.81,192.66,1000.0,25.0,SP-002,IV_CURVE_TRACER_HT,Step at 27V indicating 1 sub-string bypass diode conduction.
+11,19.8,10.8,213.82,1000.0,25.0,SP-002,IV_CURVE_TRACER_HT,Step at 27V indicating 1 sub-string bypass diode conduction.
+12,21.78,10.78,234.85,1000.0,25.0,SP-002,IV_CURVE_TRACER_HT,Step at 27V indicating 1 sub-string bypass diode conduction.
+13,23.76,10.76,255.68,1000.0,25.0,SP-002,IV_CURVE_TRACER_HT,Step at 27V indicating 1 sub-string bypass diode conduction.
+14,25.74,10.73,276.26,1000.0,25.0,SP-002,IV_CURVE_TRACER_HT,Step at 27V indicating 1 sub-string bypass diode conduction.
+15,27.72,6.78,187.97,1000.0,25.0,SP-002,IV_CURVE_TRACER_HT,Step at 27V indicating 1 sub-string bypass diode conduction.
+16,29.7,6.67,198.05,1000.0,25.0,SP-002,IV_CURVE_TRACER_HT,Step at 27V indicating 1 sub-string bypass diode conduction.
+17,31.68,6.46,204.5,1000.0,25.0,SP-002,IV_CURVE_TRACER_HT,Step at 27V indicating 1 sub-string bypass diode conduction.
+18,33.66,6.14,206.71,1000.0,25.0,SP-002,IV_CURVE_TRACER_HT,Step at 27V indicating 1 sub-string bypass diode conduction.
+19,35.64,5.73,204.08,1000.0,25.0,SP-002,IV_CURVE_TRACER_HT,Step at 27V indicating 1 sub-string bypass diode conduction.
+20,37.62,5.21,196.02,1000.0,25.0,SP-002,IV_CURVE_TRACER_HT,Step at 27V indicating 1 sub-string bypass diode conduction.
+21,39.6,4.59,181.92,1000.0,25.0,SP-002,IV_CURVE_TRACER_HT,Step at 27V indicating 1 sub-string bypass diode conduction.
+22,41.58,3.88,161.2,1000.0,25.0,SP-002,IV_CURVE_TRACER_HT,Step at 27V indicating 1 sub-string bypass diode conduction.
+23,43.56,3.06,133.24,1000.0,25.0,SP-002,IV_CURVE_TRACER_HT,Step at 27V indicating 1 sub-string bypass diode conduction.
+24,45.54,2.14,97.46,1000.0,25.0,SP-002,IV_CURVE_TRACER_HT,Step at 27V indicating 1 sub-string bypass diode conduction.
+25,47.52,1.12,53.24,1000.0,25.0,SP-002,IV_CURVE_TRACER_HT,Step at 27V indicating 1 sub-string bypass diode conduction.
+26,49.5,0.0,0.0,1000.0,25.0,SP-002,IV_CURVE_TRACER_HT,Step at 27V indicating 1 sub-string bypass diode conduction.

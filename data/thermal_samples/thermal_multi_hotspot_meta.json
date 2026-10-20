@@ -1,0 +1,24 @@
+{
+  "name": "thermal_multi_hotspot",
+  "filename": "thermal_multi_hotspot.png",
+  "matrixFile": "thermal_multi_hotspot_matrix.npy",
+  "tMin": 29.5,
+  "tMax": 69.4,
+  "tAvg": 41.6,
+  "tNominal": 41.0,
+  "deltaT": 28.4,
+  "emissivity": 0.95,
+  "ambientTemp": 25.0,
+  "calibrationSpanMin": 25.0,
+  "calibrationSpanMax": 75.0,
+  "anomalyType": "MULTI_CELL",
+  "box": {
+    "x": 146,
+    "y": 230,
+    "width": 252,
+    "height": 140
+  },
+  "description": "Multiple adjacent cells exhibiting elevated thermal dissipation due to internal shunts.",
+  "iecClass": "Class 2 (Significant)",
+  "severity": "HIGH"
+}

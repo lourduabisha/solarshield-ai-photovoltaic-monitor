@@ -1,0 +1,13 @@
+{
+  "filename": "electrical_iv_soiling_current_loss.csv",
+  "title": "Uniform Soiling / Dust (35% Current Loss)",
+  "panelId": "SP-003",
+  "description": "Normal open-circuit voltage but current suppressed by 35% due to surface soiling.",
+  "expectedAnomaly": "CURRENT_DEPRESSION_SOILING",
+  "irradiance": 1000.0,
+  "panelTemp": 26.5,
+  "source": "IV_CURVE_TRACER_HT",
+  "pointsCount": 26,
+  "nominalVoc": 49.0,
+  "nominalIsc": 7.05
+}

@@ -1,0 +1,30 @@
+# SolarShield Calibrated Electrical Measurement Dataset
+# Title: Low Shunt Resistance / PID Leakage
+# Panel: SP-005 | Irradiance: 980.0 W/m2 | Temperature: 28.0 °C
+point_index,voltage_v,current_a,measured_power_w,irradiance_wm2,panel_temp_c,panel_id,source,notes
+1,0.0,10.85,0.0,980.0,28.0,SP-005,SEAWARD_PV200,Steep current slope in low-voltage region (Rsh < 100 Ω).
+2,1.93,10.82,20.88,980.0,28.0,SP-005,SEAWARD_PV200,Steep current slope in low-voltage region (Rsh < 100 Ω).
+3,3.86,10.79,41.65,980.0,28.0,SP-005,SEAWARD_PV200,Steep current slope in low-voltage region (Rsh < 100 Ω).
+4,5.78,10.76,62.19,980.0,28.0,SP-005,SEAWARD_PV200,Steep current slope in low-voltage region (Rsh < 100 Ω).
+5,7.71,10.73,82.73,980.0,28.0,SP-005,SEAWARD_PV200,Steep current slope in low-voltage region (Rsh < 100 Ω).
+6,9.64,10.70,103.15,980.0,28.0,SP-005,SEAWARD_PV200,Steep current slope in low-voltage region (Rsh < 100 Ω).
+7,11.57,10.66,123.34,980.0,28.0,SP-005,SEAWARD_PV200,Steep current slope in low-voltage region (Rsh < 100 Ω).
+8,13.5,10.62,143.37,980.0,28.0,SP-005,SEAWARD_PV200,Steep current slope in low-voltage region (Rsh < 100 Ω).
+9,15.42,10.57,162.99,980.0,28.0,SP-005,SEAWARD_PV200,Steep current slope in low-voltage region (Rsh < 100 Ω).
+10,17.35,10.52,182.52,980.0,28.0,SP-005,SEAWARD_PV200,Steep current slope in low-voltage region (Rsh < 100 Ω).
+11,19.28,10.45,201.48,980.0,28.0,SP-005,SEAWARD_PV200,Steep current slope in low-voltage region (Rsh < 100 Ω).
+12,21.21,10.37,219.95,980.0,28.0,SP-005,SEAWARD_PV200,Steep current slope in low-voltage region (Rsh < 100 Ω).
+13,23.14,10.28,237.88,980.0,28.0,SP-005,SEAWARD_PV200,Steep current slope in low-voltage region (Rsh < 100 Ω).
+14,25.06,10.16,254.61,980.0,28.0,SP-005,SEAWARD_PV200,Steep current slope in low-voltage region (Rsh < 100 Ω).
+15,26.99,10.02,270.44,980.0,28.0,SP-005,SEAWARD_PV200,Steep current slope in low-voltage region (Rsh < 100 Ω).
+16,28.92,9.84,284.57,980.0,28.0,SP-005,SEAWARD_PV200,Steep current slope in low-voltage region (Rsh < 100 Ω).
+17,30.85,9.62,296.78,980.0,28.0,SP-005,SEAWARD_PV200,Steep current slope in low-voltage region (Rsh < 100 Ω).
+18,32.78,9.35,306.49,980.0,28.0,SP-005,SEAWARD_PV200,Steep current slope in low-voltage region (Rsh < 100 Ω).
+19,34.7,8.98,311.61,980.0,28.0,SP-005,SEAWARD_PV200,Steep current slope in low-voltage region (Rsh < 100 Ω).
+20,36.63,8.51,311.72,980.0,28.0,SP-005,SEAWARD_PV200,Steep current slope in low-voltage region (Rsh < 100 Ω).
+21,38.56,7.95,306.55,980.0,28.0,SP-005,SEAWARD_PV200,Steep current slope in low-voltage region (Rsh < 100 Ω).
+22,40.49,7.12,288.29,980.0,28.0,SP-005,SEAWARD_PV200,Steep current slope in low-voltage region (Rsh < 100 Ω).
+23,42.42,5.85,248.16,980.0,28.0,SP-005,SEAWARD_PV200,Steep current slope in low-voltage region (Rsh < 100 Ω).
+24,44.34,4.10,181.79,980.0,28.0,SP-005,SEAWARD_PV200,Steep current slope in low-voltage region (Rsh < 100 Ω).
+25,46.27,1.85,85.60,980.0,28.0,SP-005,SEAWARD_PV200,Steep current slope in low-voltage region (Rsh < 100 Ω).
+26,48.2,0.0,0.0,980.0,28.0,SP-005,SEAWARD_PV200,Steep current slope in low-voltage region (Rsh < 100 Ω).

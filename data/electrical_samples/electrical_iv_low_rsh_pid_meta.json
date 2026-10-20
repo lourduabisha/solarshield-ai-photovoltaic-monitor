@@ -1,0 +1,13 @@
+{
+  "filename": "electrical_iv_low_rsh_pid.csv",
+  "title": "Low Shunt Resistance / PID Leakage",
+  "panelId": "SP-005",
+  "description": "Severe current leakage slope across low voltages indicative of cell shunting or PID.",
+  "expectedAnomaly": "LOW_SHUNT_RESISTANCE",
+  "irradiance": 980.0,
+  "panelTemp": 28.0,
+  "source": "SEAWARD_PV200",
+  "pointsCount": 26,
+  "nominalVoc": 48.2,
+  "nominalIsc": 10.85
+}

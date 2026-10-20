@@ -1,0 +1,2774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SolarShield — AI Photovoltaic Fault Monitor & Diagnostic Portal</title>
+  <meta name="description" content="Mission-critical photovoltaic solar module fault detection, derating estimation, and spatial anomaly localization portal.">
+  
+  <!-- Google Fonts: Outfit & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome 6 Pro Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Core Design System -->
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+  <!-- ======================================================================
+       AUTHENTICATION SCREEN (LOGIN & REGISTER)
+       ====================================================================== -->
+  <div id="auth-screen">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="auth-logo">
+          <i class="fa-solid fa-solar-panel"></i>
+        </div>
+        <h1>SOLARSHIELD</h1>
+        <p>AI Photovoltaic Fault Monitor & Diagnostic Portal</p>
+      </div>
+
+      <!-- 1. LOGIN FORM (Section 1: Clean, No Exposed Credentials) -->
+      <form id="login-form" class="auth-form" onsubmit="event.preventDefault(); handleLogin();">
+        <div class="form-group">
+          <label class="form-label" for="login-email">Engineer Email Address</label>
+          <div class="auth-input-wrap">
+            <input type="email" class="form-input" id="login-email" placeholder="engineer@solarshield.com" autocomplete="username" required>
+            <i class="fa-solid fa-envelope prefix-icon"></i>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="login-password">Access Password</label>
+          <div class="auth-input-wrap">
+            <input type="password" class="form-input" id="login-password" placeholder="••••••••" autocomplete="current-password" required>
+            <i class="fa-solid fa-lock prefix-icon"></i>
+            <button type="button" class="toggle-pwd-btn" onclick="togglePasswordVisibility('login-password')" title="Toggle password visibility">
+              <i class="fa-solid fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="login-submit-btn" style="height: 48px; width: 100%; margin-top: 8px;">
+          <i class="fa-solid fa-right-to-bracket"></i> Authenticate & Enter Portal
+        </button>
+
+        <div class="auth-footer">
+          Don't have an account? <a onclick="toggleAuthMode('register')">Register as New Engineer</a>
+        </div>
+      </form>
+
+      <!-- 2. REGISTER FORM (TOGGLEABLE) -->
+      <form id="register-form" class="auth-form" style="display: none;" onsubmit="event.preventDefault(); handleRegister();">
+        <div class="form-group">
+          <label class="form-label" for="reg-name">Full Name & Credentials</label>
+          <div class="auth-input-wrap">
+            <input type="text" class="form-input" id="reg-name" placeholder="Dr. Vikram Sen" required>
+            <i class="fa-solid fa-user prefix-icon"></i>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-email">Work Email Address</label>
+          <div class="auth-input-wrap">
+            <input type="email" class="form-input" id="reg-email" placeholder="v.sen@solarshield.com" required>
+            <i class="fa-solid fa-envelope prefix-icon"></i>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-password">Create Access Password</label>
+          <div class="auth-input-wrap">
+            <input type="password" class="form-input" id="reg-password" placeholder="••••••••" required>
+            <i class="fa-solid fa-lock prefix-icon"></i>
+            <button type="button" class="toggle-pwd-btn" onclick="togglePasswordVisibility('reg-password')">
+              <i class="fa-solid fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-role">System Operational Role</label>
+          <select class="form-select" id="reg-role">
+            <option value="ENGINEER">Solar Diagnostic Engineer</option>
+            <option value="ADMIN">System Administrator</option>
+            <option value="FIELD_TECH">Field Repair Specialist</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="reg-submit-btn" style="height: 48px; width: 100%; margin-top: 8px;">
+          <i class="fa-solid fa-user-plus"></i> Create Engineer Account
+        </button>
+
+        <div class="auth-footer">
+          Already registered? <a onclick="toggleAuthMode('login')">Return to Login</a>
+        </div>
+      </form>
+
+      <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; color: var(--text-dim);">
+        <i class="fa-solid fa-shield-halved" style="color: var(--primary);"></i>
+        <span>256-bit BCrypt Verification • SQLite Local ACID Database</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       MAIN APPLICATION SHELL (AUTHENTICATED SESSION)
+       ====================================================================== -->
+  <div id="app-container" style="display: none;">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <i class="fa-solid fa-solar-panel"></i>
+        </div>
+        <div class="brand-info">
+          <h1>SOLARSHIELD</h1>
+          <span>AI Fault Monitor v2.5</span>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <div class="nav-category">Core Operations</div>
+        <a class="nav-item active" data-tab="dashboard">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Fleet Dashboard</span>
+        </a>
+        <a class="nav-item" data-tab="studio">
+          <i class="fa-solid fa-crosshairs"></i>
+          <span>AI Detection Studio</span>
+        </a>
+        <a class="nav-item" data-tab="assistant" id="nav-assistant">
+          <i class="fa-solid fa-robot"></i>
+          <span>AI Solar Assistant</span>
+          <span class="badge" style="background: rgba(16,185,129,0.2); color: #34d399;">CARE</span>
+        </a>
+        <a class="nav-item" data-tab="thermal" id="nav-thermal">
+          <i class="fa-solid fa-temperature-arrow-up"></i>
+          <span>Thermal Inspection</span>
+          <span class="badge" style="background: rgba(239,68,68,0.2); color: #f87171;">IRT</span>
+        </a>
+        <a class="nav-item" data-tab="electrical" id="nav-electrical">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>Electrical Diagnostics</span>
+          <span class="badge" style="background: rgba(16,185,129,0.2); color: #34d399;">I–V</span>
+        </a>
+
+        <div class="nav-category">Asset Management</div>
+        <a class="nav-item" data-tab="panels">
+          <i class="fa-solid fa-table-cells"></i>
+          <span>Solar Panel Fleet</span>
+          <span class="badge" id="sidebar-panel-count" style="background: rgba(255,255,255,0.06); color: var(--text-muted);">--</span>
+        </a>
+        <a class="nav-item" data-tab="maintenance">
+          <i class="fa-solid fa-wrench"></i>
+          <span>Maintenance Orders</span>
+        </a>
+        <a class="nav-item" data-tab="reports">
+          <i class="fa-solid fa-file-invoice"></i>
+          <span>Audit Reports & CSV</span>
+        </a>
+
+        <div class="nav-category">System</div>
+        <a class="nav-item" data-tab="settings">
+          <i class="fa-solid fa-gear"></i>
+          <span>System Settings</span>
+        </a>
+
+        <div class="nav-category">Account</div>
+        <a class="nav-item nav-item-logout" onclick="handleLogout()">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span>Log Out</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="system-pill">
+          <div class="pulse-dot"></div>
+          <span id="sidebar-db-status">SQLite ACID ONLINE</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Workspace -->
+    <main class="main-wrapper">
+      
+      <!-- Top Header Bar -->
+      <header class="top-header">
+        <div class="header-title-box">
+          <h2 id="page-title">Photovoltaic Fleet Dashboard</h2>
+          <p id="page-subtitle">Real-time solar module health, spatial anomaly localization, and derating analytics</p>
+        </div>
+
+        <div class="header-actions">
+          <!-- Active User Badge -->
+          <div class="user-badge">
+            <div class="user-avatar" id="header-user-avatar">AE</div>
+            <div>
+              <span class="user-name" id="header-user-name">Engineer</span>
+              <span class="user-role-tag" id="header-user-role">ENGINEER</span>
+            </div>
+          </div>
+
+          <!-- Prominent Logout Button -->
+          <button class="btn-logout" id="logout-btn" onclick="handleLogout()" title="Terminate session and return to login">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Logout</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Content Scrollable Body -->
+      <div class="content-body">
+
+        <!-- ==================================================================
+             TAB 1: FLEET DASHBOARD (Section 3: Fully Database Driven)
+             ================================================================== -->
+        <section id="tab-dashboard" class="tab-panel active">
+          
+          <!-- KPI Metrics Cards Grid -->
+          <div class="kpi-grid">
+            <div class="card card-kpi" style="--kpi-color: var(--primary);" title="Actual registered module inventory in database: 51 total modules (22 Nominal healthy, 29 with active anomalies).">
+              <div class="kpi-header">
+                <span class="kpi-title">Monitored Fleet Modules</span>
+                <div class="kpi-icon-wrap"><i class="fa-solid fa-solar-panel"></i></div>
+              </div>
+              <div class="kpi-value" id="kpi-total-panels">--</div>
+              <div class="kpi-sub">
+                <span style="color: var(--emerald); font-weight: 700;" id="kpi-healthy-panels">-- Nominal</span>
+                <span id="kpi-healthy-sub">• 29 with active anomalies</span>
+              </div>
+              <div style="font-size: 13px; color: var(--text-dim); margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border-subtle);">
+                Actual Inventory: 51 Registered Modules
+              </div>
+            </div>
+
+            <div class="card card-kpi" style="--kpi-color: var(--rose);" title="Documented Counting Rule: Represents the 29 unique fleet modules currently in non-healthy status (26 Faulty, 3 Critical). Excludes 22 nominal modules. Differs from the 70 total historical inspection reports (which include 64 defect logs across repeated inspections and 6 nominal control checks).">
+              <div class="kpi-header">
+                <span class="kpi-title">Fault Anomalies Flagged</span>
+                <div class="kpi-icon-wrap"><i class="fa-solid fa-triangle-exclamation"></i></div>
+              </div>
+              <div class="kpi-value" id="kpi-faulty-panels" style="color: var(--rose);">--</div>
+              <div class="kpi-sub">
+                <span style="color: var(--rose); font-weight: 700;" id="kpi-fault-pct">--%</span>
+                <span id="kpi-fault-sub">of fleet (unique modules)</span>
+              </div>
+              <div style="font-size: 13px; color: var(--text-dim); margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border-subtle);" id="kpi-fault-logs-sub">
+                Rule: 29 Unique Modules • 64 Fault Logs
+              </div>
+            </div>
+
+            <div class="card card-kpi" style="--kpi-color: var(--amber);" title="56 active system alerts (13 Critical, 43 High) triggered from inspection severity thresholds across 31 unique affected modules. 34 maintenance work orders currently pending.">
+              <div class="kpi-header">
+                <span class="kpi-title">High & Critical Alerts</span>
+                <div class="kpi-icon-wrap"><i class="fa-solid fa-bell"></i></div>
+              </div>
+              <div class="kpi-value" id="kpi-alerts-count" style="color: var(--amber);">--</div>
+              <div class="kpi-sub">
+                <span style="color: var(--amber); font-weight: 700;" id="kpi-alerts-breakdown">-- Critical • -- High</span>
+                <span id="kpi-alerts-panels">(31 unique modules)</span>
+              </div>
+              <div style="font-size: 13px; color: var(--text-dim); margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border-subtle);" id="kpi-pending-maint">
+                -- Pending Work Orders Dispatched
+              </div>
+            </div>
+
+            <div class="card card-kpi" style="--kpi-color: var(--violet);" title="Active Fleet Derating: 4,539.5 W estimated active loss derived from latest module inspection records (21.0% of 21,650 W fleet capacity). Cumulative across all 70 historical audit reports: 8,197.6 W.">
+              <div class="kpi-header">
+                <span class="kpi-title">Estimated Power Impact</span>
+                <div class="kpi-icon-wrap"><i class="fa-solid fa-bolt-lightning"></i></div>
+              </div>
+              <div class="kpi-value" id="kpi-loss-watts" style="color: var(--violet);">-- W</div>
+              <div class="kpi-sub">
+                <span style="color: var(--rose); font-weight: 700;" id="kpi-loss-pct">--% Derating</span>
+                <span id="kpi-loss-fleet-rated">of 21.65 kW fleet capacity</span>
+              </div>
+              <div style="font-size: 13px; color: var(--text-dim); margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border-subtle);" id="kpi-loss-cumulative-sub">
+                Active: 4,539.5 W • Cumulative Logs: 8,197.6 W
+              </div>
+            </div>
+          </div>
+
+          <!-- Analytics Charts & Activity Stream -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 28px;">
+            
+            <!-- Defect Classification Distribution -->
+            <div class="card">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+                <div>
+                  <h3 style="font-family: var(--font-heading); font-size: 18px; font-weight: 600; margin: 0; color: #fff;">Inspection Report Defect Distribution</h3>
+                  <div style="font-size: 14px; color: var(--text-muted); margin-top: 3px;" id="dist-mode-subtitle">
+                    70 Historical Inspection Logs (64 Anomaly Reports • 6 Nominal Controls)
+                  </div>
+                </div>
+                <div class="btn-group" style="display: flex; gap: 6px; background: #111827; padding: 4px; border-radius: 6px; border: 1px solid var(--border-subtle);">
+                  <button id="btn-dist-reports" class="btn btn-sm btn-primary" style="padding: 6px 12px; font-size: 13px;" onclick="switchDefectView('reports')">By Reports (70)</button>
+                  <button id="btn-dist-modules" class="btn btn-sm btn-outline" style="padding: 6px 12px; font-size: 13px;" onclick="switchDefectView('modules')">By Unique Modules (51)</button>
+                </div>
+              </div>
+
+              <div style="background: #162032; border: 1px solid var(--border-subtle); border-radius: 6px; padding: 12px 16px; font-size: 14px; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.5;">
+                <i class="fa-solid fa-circle-info" style="color: var(--primary); margin-right: 6px;"></i>
+                <strong>Counting Methodology:</strong> <span id="dist-methodology-note">Counts 70 logged inspection reports in fault_reports. 64 are fault reports and 6 are nominal control scans. The summary card displays 29 unique faulty panels out of 51 total modules.</span>
+              </div>
+
+              <div id="chart-bars" style="display: flex; flex-direction: column; gap: 14px;">
+                <!-- Populated via JavaScript dynamically from SQLite -->
+              </div>
+            </div>
+
+            <!-- Severity & Maintenance Urgency Matrix -->
+            <div class="card">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+                <div>
+                  <h3 style="font-family: var(--font-heading); font-size: 18px; font-weight: 600; margin: 0; color: #fff;">Operational Severity Breakdown</h3>
+                  <div style="font-size: 14px; color: var(--text-muted); margin-top: 3px;">
+                    Severity Distribution across 70 Inspection Logs & Unique Affected Modules
+                  </div>
+                </div>
+                <span class="badge" style="background: rgba(245,158,11,0.15); color: var(--amber); border: 1px solid rgba(245,158,11,0.3); font-size: 13px; padding: 4px 10px; font-weight: 600;">
+                  70 Reports • 39 Audited Modules
+                </span>
+              </div>
+
+              <div style="background: #162032; border: 1px solid var(--border-subtle); border-radius: 6px; padding: 12px 16px; font-size: 14px; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.5;">
+                <i class="fa-solid fa-triangle-exclamation" style="color: var(--amber); margin-right: 6px;"></i>
+                <strong>Severity Assessment:</strong> Derived from actual inspection records. Unique module counts eliminate repeat scan duplicate inflation.
+              </div>
+
+              <div id="severity-meter-box" style="display: flex; flex-direction: column; gap: 14px;">
+                <!-- Populated via JavaScript dynamically from SQLite -->
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Recent Inspection Reports Table -->
+          <div class="card table-card">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+              <div>
+                <h3 style="font-family: var(--font-heading); font-size: 18px; font-weight: 600; color: #fff;">Recent Diagnostic Logs</h3>
+                <p style="font-size: 14px; color: var(--text-muted); margin-top: 3px;">Live inspection history ordered by timestamp descending from SQLite database</p>
+              </div>
+              <button class="btn btn-outline" style="font-size: 14px; padding: 8px 16px;" onclick="loadDashboard()">
+                <i class="fa-solid fa-arrows-rotate"></i> Refresh
+              </button>
+            </div>
+
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Report ID</th>
+                  <th>Panel ID</th>
+                  <th>Detected Fault</th>
+                  <th>Detection Score</th>
+                  <th>Severity</th>
+                  <th>Priority</th>
+                  <th>Estimated Impact</th>
+                  <th>Inspection Date</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="recent-reports-body">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+
+        </section>
+
+        <!-- ==================================================================
+             TAB 2: AI FAULT DETECTION STUDIO (Sections 4, 5, 6, 7, 8, 9, 14)
+             ================================================================== -->
+        <section id="tab-studio" class="tab-panel">
+          
+          <!-- Compact AI Model Information Panel (Section 5) -->
+          <div class="card" style="margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <h3 style="font-family: var(--font-heading); font-size: 18px; font-weight: 600; color: #fff; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-microchip" style="color: var(--primary);"></i> AI Model Information
+              </h3>
+              <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); font-size: 13px; padding: 4px 10px; font-weight: 600;">
+                Demo / OpenCV
+              </span>
+            </div>
+
+            <div class="model-info-grid">
+              <div class="model-info-item">
+                <span class="model-info-label">Model Name</span>
+                <span class="model-info-val">SolarShield Vision Diagnostic Engine</span>
+              </div>
+              <div class="model-info-item">
+                <span class="model-info-label">Model Version</span>
+                <span class="model-info-val">v2.5-cv</span>
+              </div>
+              <div class="model-info-item">
+                <span class="model-info-label">Detection Mode</span>
+                <span class="model-info-val" style="color: #fbbf24;">Demo / OpenCV</span>
+              </div>
+              <div class="model-info-item">
+                <span class="model-info-label">Input Type</span>
+                <span class="model-info-val">RGB / Thermal / Aerial Imagery</span>
+              </div>
+            </div>
+
+            <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border-subtle);">
+              <span style="font-size: 13px; color: var(--text-dim); font-weight: 600; display: block; margin-bottom: 8px;">
+                Supported Fault Classes (6 + Review Status)
+              </span>
+              <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                <span class="badge badge-healthy">Healthy</span>
+                <span class="badge badge-hotspot">Hotspot</span>
+                <span class="badge badge-crack">Crack</span>
+                <span class="badge badge-soiling">Soiling</span>
+                <span class="badge badge-shading">Partial Shading</span>
+                <span class="badge badge-damage">Physical Damage</span>
+                <span class="badge badge-warning" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3);">Needs Review</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="studio-grid">
+            
+            <!-- Controls & Image Picker -->
+            <div class="studio-controls">
+              
+              <div class="card">
+                <h3 style="font-family: var(--font-heading); font-size: 18px; font-weight: 600; margin-bottom: 16px;">
+                  1. Target Solar Module
+                </h3>
+                
+                <div class="form-group" style="margin-bottom: 16px;">
+                  <label class="form-label" for="studio-panel-select">Select Registered Panel</label>
+                  <select class="form-select" id="studio-panel-select">
+                    <!-- Populated dynamically -->
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="studio-rated-power">Rated Module Power (W)</label>
+                  <input type="number" class="form-input" id="studio-rated-power" value="400">
+                </div>
+              </div>
+
+              <div class="card">
+                <h3 style="font-family: var(--font-heading); font-size: 18px; font-weight: 600; margin-bottom: 16px;">
+                  2. Solar Panel Image Source
+                </h3>
+
+                <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 14px;">Choose a sample demonstration frame:</p>
+                <div class="sample-grid" id="sample-gallery">
+                  <!-- Populated via API -->
+                </div>
+
+                <div style="margin: 18px 0; text-align: center; color: var(--text-dim); font-size: 13px; font-weight: 600;">Or Upload Custom File</div>
+
+                <div class="dropzone" id="upload-dropzone">
+                  <i class="fa-solid fa-cloud-arrow-up" style="font-size: 32px; color: var(--primary); margin-bottom: 10px;"></i>
+                  <p style="font-size: 15px; font-weight: 600;">Drag & Drop Solar Image</p>
+                  <span style="font-size: 13px; color: var(--text-muted); margin-top: 4px; display: block;">Supports JPG, PNG, BMP (Optical or Simulated Thermal)</span>
+                  <input type="file" id="file-input" accept="image/*" style="display: none;">
+                </div>
+              </div>
+
+              <button class="btn btn-primary" id="run-detection-btn" style="width: 100%; height: 52px; font-size: 16px;">
+                <i class="fa-solid fa-crosshairs"></i> Run Fault Detection Pipeline
+              </button>
+
+            </div>
+
+            <!-- Viewer & Diagnostic Telemetry -->
+            <div class="inspection-viewer-card">
+              
+              <div class="card" style="padding: 20px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <span class="badge badge-healthy" id="viewer-status-badge">STANDBY</span>
+                    <span style="font-size: 15px; font-weight: 600; color: #fff;" id="viewer-panel-title">Select module and image frame, then run detection</span>
+                  </div>
+                  <div style="font-size: 14px; color: var(--text-muted);">
+                    <i class="fa-solid fa-arrows-left-right" style="color: var(--primary);"></i> Drag center slider to compare
+                  </div>
+                </div>
+
+                <!-- Interactive Comparison Slider -->
+                <div class="comparison-wrapper" id="comparison-container">
+                  <img id="comp-original" src="/sample_images/2_hotspot_panel.jpg" alt="Raw Ingestion">
+                  <img id="comp-analyzed" class="comparison-overlay-img" src="/sample_images/2_hotspot_panel.jpg" alt="Diagnostic Overlay">
+                  
+                  <div class="comparison-handle" id="comp-handle">
+                    <div class="comparison-handle-knob">
+                      <i class="fa-solid fa-arrows-left-right"></i>
+                    </div>
+                  </div>
+
+                  <div class="slider-labels">
+                    <div class="slider-tag">Raw Ingestion</div>
+                    <div class="slider-tag" style="background: rgba(14, 165, 233, 0.2); border-color: var(--primary); color: var(--primary);">Diagnostic HUD</div>
+                  </div>
+                </div>
+
+                <!-- Live Diagnostic Telemetry Grid (Sections 7 & 8) -->
+                <div class="telemetry-grid" style="margin-top: 20px;">
+                  <div class="telemetry-item">
+                    <div class="telemetry-label">Detected Fault Type</div>
+                    <div class="telemetry-value" id="tel-fault-type" style="color: var(--rose);">HOTSPOT</div>
+                  </div>
+
+                  <div class="telemetry-item">
+                    <div class="telemetry-label">Detection Mode</div>
+                    <div class="telemetry-value" id="tel-detection-mode" style="color: #fbbf24; font-size: 16px;">AI-Assisted Demo</div>
+                  </div>
+
+                  <div class="telemetry-item">
+                    <div class="telemetry-label">Detection Score</div>
+                    <div class="telemetry-value" id="tel-confidence" style="color: var(--primary);">96.3%</div>
+                    <div style="font-size: 13px; color: var(--text-dim); margin-top: 4px;">Confidence score</div>
+                  </div>
+
+                  <div class="telemetry-item">
+                    <div class="telemetry-label">Estimated Severity</div>
+                    <div class="telemetry-value" id="tel-severity" style="color: var(--amber);">HIGH</div>
+                  </div>
+
+                  <div class="telemetry-item">
+                    <div class="telemetry-label">Estimated Power Impact</div>
+                    <div class="telemetry-value" id="tel-power-loss" style="color: var(--violet);">-120.0 W (30.0%)</div>
+                  </div>
+
+                  <div class="telemetry-item">
+                    <div class="telemetry-label">Model Version</div>
+                    <div class="telemetry-value" id="tel-model-version" style="color: #fff; font-size: 16px;">v2.5-cv</div>
+                  </div>
+                </div>
+
+                <!-- Approximate Spatial Localization (Section 9) -->
+                <div style="margin-top: 16px; padding: 14px 16px; background: #162032; border-radius: var(--radius-md); border-left: 3px solid var(--primary); border-top: 1px solid var(--border-subtle); border-right: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);">
+                  <div style="font-size: 14px; font-weight: 600; color: var(--primary); margin-bottom: 6px;">
+                    <i class="fa-solid fa-crosshairs"></i> Approximate Spatial Localization
+                  </div>
+                  <div style="font-size: 15px; font-weight: 600; color: #fff;" id="tel-region">Upper-Right Sector - Localized Thermal Hotspot</div>
+                </div>
+
+                <!-- "Why Was This Flagged?" Explanation (Section 6) -->
+                <div class="explanation-box">
+                  <div class="explanation-title">
+                    <i class="fa-solid fa-circle-question"></i> Why Was This Flagged?
+                  </div>
+                  <div style="font-size: 15px; color: #cbd5e1; line-height: 1.6;" id="tel-why-flagged">
+                    Thermal gradient analysis detected an abnormal localized high-temperature delta (>15°C) across photovoltaic cells, indicating localized resistance or current mismatch.
+                  </div>
+                </div>
+
+                <!-- Recommended Action Callout (Section 14) -->
+                <div class="action-box">
+                  <div class="action-title">
+                    <i class="fa-solid fa-shield-virus"></i> Recommended Action
+                  </div>
+                  <div style="font-size: 15px; color: #fde68a; line-height: 1.6;" id="tel-action">
+                    Inspect thermal anomaly and associated electrical connections, bypass diodes, and cell junctions.
+                  </div>
+                </div>
+
+                <!-- Action Toolbar (Section 13: Work Order Inheritance) -->
+                <div style="display: flex; gap: 14px; margin-top: 20px; flex-wrap: wrap;">
+                  <button class="btn btn-outline" id="create-workorder-btn" style="font-size: 15px;">
+                    <i class="fa-solid fa-wrench" style="color: var(--amber);"></i> Create Work Order
+                  </button>
+                  <button class="btn btn-outline" onclick="window.print()" style="font-size: 15px;">
+                    <i class="fa-solid fa-print"></i> Print Inspection Certificate
+                  </button>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+        <!-- ==================================================================
+             TAB 3: AI SOLAR ASSISTANT — SOLAR CARE & RECYCLING ADVISOR
+             Pure Software Feature • Damaged Module Triage • Reminders • Recycling
+             ================================================================== -->
+        <section id="tab-assistant" class="tab-panel">
+          
+          <!-- Header Banner & Pure Software Disclaimer -->
+          <div class="card" style="margin-bottom: 20px; background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.9) 100%);">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+                  <h3 style="font-family: var(--font-heading); font-size: 22px; font-weight: 600; color: #fff; display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-robot" style="color: var(--primary);"></i> SolarShield AI Assistant — Solar Care & Recycling Advisor
+                  </h3>
+                  <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3);">
+                    PURE SOFTWARE • ZERO HARDWARE
+                  </span>
+                </div>
+                <p style="font-size: 15px; color: var(--text-muted); line-height: 1.5;">
+                  Evidence-based failure investigation, repair vs. retirement decisions, 8-stage responsible recycling, and smart maintenance reminders.
+                </p>
+              </div>
+
+              <!-- Context Asset Selector -->
+              <div style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border-subtle);">
+                <label for="ast-panel-select" style="font-size: 14px; font-weight: 600; color: var(--text-secondary);">Focus Module:</label>
+                <select class="form-select" id="ast-panel-select" style="width: 180px; height: 40px; padding: 6px 12px; font-size: 14px;" onchange="handleAssistantPanelChange()">
+                  <!-- Populated dynamically with fleet panels -->
+                </select>
+                <button class="btn btn-outline" style="height: 40px; padding: 0 14px; font-size: 14px;" onclick="refreshAssistantContext()" title="Refresh records for this panel">
+                  <i class="fa-solid fa-arrows-rotate"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Sub-Navigation Navigation Pills -->
+            <div class="ast-subnav" style="display: flex; gap: 8px; margin-top: 18px; border-top: 1px solid var(--border-subtle); padding-top: 14px; flex-wrap: wrap;">
+              <button class="btn btn-outline ast-tab-btn active" data-subtab="chat" onclick="switchAssistantSubtab('chat')">
+                <i class="fa-solid fa-comments"></i> <span>Interactive Chat</span>
+              </button>
+              <button class="btn btn-outline ast-tab-btn" data-subtab="investigate" onclick="switchAssistantSubtab('investigate')">
+                <i class="fa-solid fa-magnifying-glass-chart"></i> <span>Failure Investigation</span>
+              </button>
+              <button class="btn btn-outline ast-tab-btn" data-subtab="recycle" onclick="switchAssistantSubtab('recycle')">
+                <i class="fa-solid fa-recycle"></i> <span>Recycling Advisor (8 Stages)</span>
+              </button>
+              <button class="btn btn-outline ast-tab-btn" data-subtab="reminders" onclick="switchAssistantSubtab('reminders')">
+                <i class="fa-solid fa-bell"></i> <span>Smart Maintenance Reminders</span>
+                <span class="badge" id="ast-overdue-badge" style="background: rgba(239,68,68,0.2); color: #f87171; margin-left: 6px;">0</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- SUB-VIEW 1: INTERACTIVE CHAT -->
+          <div id="ast-subview-chat" class="ast-subview">
+            <div style="display: grid; grid-template-columns: 1fr 340px; gap: 20px;">
+              <!-- Left: Chat Workspace -->
+              <div class="card" style="display: flex; flex-direction: column; height: 680px; padding: 0; overflow: hidden;">
+                <!-- Suggested Quick Prompts -->
+                <div style="padding: 12px 16px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border-subtle);">
+                  <div style="font-size: 13px; color: var(--text-secondary); font-weight: 600; margin-bottom: 8px;">
+                    Suggested Questions (click to ask):
+                  </div>
+                  <div id="ast-suggested-prompts" style="display: flex; flex-wrap: wrap; gap: 6px;">
+                    <button class="ast-prompt-chip" onclick="askAssistant('Which panels have overdue maintenance?')">Which panels have overdue maintenance?</button>
+                    <button class="ast-prompt-chip" onclick="askAssistant('My solar panel has completely failed. What should I do?')">My solar panel has completely failed. What should I do?</button>
+                    <button class="ast-prompt-chip" onclick="askAssistant('Should I repair or recycle this panel?')">Should I repair or recycle this panel?</button>
+                    <button class="ast-prompt-chip" onclick="askAssistant('Show me panels with recurring faults.')">Show me panels with recurring faults.</button>
+                    <button class="ast-prompt-chip" onclick="askAssistant('Why was this panel flagged during inspection?')">Why was this panel flagged during inspection?</button>
+                    <button class="ast-prompt-chip" onclick="askAssistant('What maintenance is due this week?')">What maintenance is due this week?</button>
+                    <button class="ast-prompt-chip" onclick="askAssistant('How do I arrange responsible recycling for a retired panel?')">How do I arrange responsible recycling for a retired panel?</button>
+                  </div>
+                </div>
+
+                <!-- Chat Messages Stream -->
+                <div id="ast-chat-messages" style="flex: 1; overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 14px;">
+                  <!-- Dynamic chat bubbles -->
+                </div>
+
+                <!-- Typing / Loading Indicator -->
+                <div id="ast-typing-indicator" style="display: none; padding: 8px 18px; font-size: 14px; color: var(--text-secondary);">
+                  <i class="fa-solid fa-spinner fa-spin" style="color: var(--primary);"></i> Analyzing database records...
+                </div>
+
+                <!-- Chat Input Controls -->
+                <div style="padding: 14px 18px; background: rgba(15, 23, 42, 0.8); border-top: 1px solid var(--border-subtle); display: flex; gap: 10px; align-items: center;">
+                  <input type="text" class="form-input" id="ast-chat-input" placeholder="Ask about panels, failure diagnostics, overdue maintenance, recycling..." style="flex: 1; height: 46px;" onkeydown="if(event.key === 'Enter') handleAssistantSend();">
+                  <button class="btn btn-primary" id="ast-send-btn" onclick="handleAssistantSend()" style="height: 46px; padding: 0 20px;">
+                    <i class="fa-solid fa-paper-plane"></i> Send
+                  </button>
+                  <button class="btn btn-outline" onclick="clearAssistantChat()" title="Clear conversation history" style="height: 46px; padding: 0 14px;">
+                    <i class="fa-solid fa-trash-can"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Right: Focus Module Real Telemetry Context Panel -->
+              <div class="card" style="height: 680px; overflow-y: auto; padding: 18px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border-subtle);">
+                  <h4 style="font-family: var(--font-heading); font-size: 18px; font-weight: 600; color: #fff;">
+                    <i class="fa-solid fa-server" style="color: var(--primary); margin-right: 6px;"></i> Verified Asset Records
+                  </h4>
+                  <span class="badge" id="ast-context-panel-id" style="background: rgba(0,240,255,0.15); color: var(--primary);">SP-001</span>
+                </div>
+
+                <div id="ast-context-body">
+                  <div style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">
+                    Loading verified module data from database...
+                  </div>
+                </div>
+
+                <!-- Action Shortcut to Open Failure Investigation -->
+                <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border-subtle);">
+                  <button class="btn btn-outline" style="width: 100%; font-size: 14px; height: 40px;" onclick="openInvestigationForSelectedPanel()">
+                    <i class="fa-solid fa-magnifying-glass-chart" style="color: var(--amber);"></i> Start Failure Investigation
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUB-VIEW 2: FAILURE INVESTIGATION WORKFLOW (Steps A, B, C, D) -->
+          <div id="ast-subview-investigate" class="ast-subview" style="display: none;">
+            <div class="card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px;">
+                <div>
+                  <h3 style="font-family: var(--font-heading); font-size: 22px; font-weight: 600; color: #fff;">
+                    Structured Solar Panel Failure Investigation
+                  </h3>
+                  <p style="font-size: 15px; color: var(--text-muted); line-height: 1.5;">
+                    Follow evidence-based criteria before declaring a module completely failed or irreparable.
+                  </p>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                  <button class="btn btn-outline" onclick="loadInvestigationsList()"><i class="fa-solid fa-list"></i> Past Investigations</button>
+                </div>
+              </div>
+
+              <!-- 4-Step Investigation Protocol Grid -->
+              <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 22px;">
+                <div class="ast-step-card" id="ast-step-1">
+                  <div class="ast-step-num">Step A</div>
+                  <div class="ast-step-title" style="font-size: 16px; font-weight: 600;">Identify Asset</div>
+                  <div class="ast-step-desc" style="font-size: 14px; color: var(--text-secondary); line-height: 1.4;">Pull verified installation, model, warranty, and historical findings.</div>
+                </div>
+                <div class="ast-step-card" id="ast-step-2">
+                  <div class="ast-step-num">Step B</div>
+                  <div class="ast-step-title" style="font-size: 16px; font-weight: 600;">Investigate Evidence</div>
+                  <div class="ast-step-desc" style="font-size: 14px; color: var(--text-secondary); line-height: 1.4;">Distinguish user report from electrical failure vs optical anomaly.</div>
+                </div>
+                <div class="ast-step-card" id="ast-step-3">
+                  <div class="ast-step-num">Step C</div>
+                  <div class="ast-step-title" style="font-size: 16px; font-weight: 600;">Recommend Action</div>
+                  <div class="ast-step-desc" style="font-size: 14px; color: var(--text-secondary); line-height: 1.4;">Evaluate repair viability, continued monitoring, or retirement.</div>
+                </div>
+                <div class="ast-step-card" id="ast-step-4">
+                  <div class="ast-step-num">Step D</div>
+                  <div class="ast-step-title" style="font-size: 16px; font-weight: 600;">Record Decision</div>
+                  <div class="ast-step-desc" style="font-size: 14px; color: var(--text-secondary); line-height: 1.4;">Persist investigation outcome, repair order, or recycling status.</div>
+                </div>
+              </div>
+
+              <!-- Active Investigation Work Area -->
+              <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px;">
+                <!-- Left: Multi-Modal Evidence Breakdown -->
+                <div>
+                  <h4 style="font-family: var(--font-heading); font-size: 18px; font-weight: 600; color: #fff; margin-bottom: 12px;">
+                    Step A & B: Multi-Modal Evidence Synthesis (<span id="inv-panel-title">SP-001</span>)
+                  </h4>
+                  
+                  <div class="ast-evidence-box" id="inv-evidence-box">
+                    <!-- Populated dynamically -->
+                  </div>
+
+                  <div class="ast-alert-warning" style="margin-top: 14px;">
+                    <i class="fa-solid fa-triangle-exclamation" style="color: var(--amber); font-size: 16px;"></i>
+                    <div style="font-size: 14px; color: var(--text-secondary); line-height: 1.5;">
+                      <strong>Critical Assessment Safeguard</strong>: An optical image classification (e.g. visible crack or hotspot) does <em>not</em> confirm complete electrical failure without multi-point I-V performance testing. Never declare a panel permanently failed solely based on an optical scan.
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Right: Step C & D Decision & Outcome Recording -->
+                <div style="background: rgba(255,255,255,0.02); padding: 18px; border-radius: 8px; border: 1px solid var(--border-subtle);">
+                  <h4 style="font-family: var(--font-heading); font-size: 18px; font-weight: 600; color: #fff; margin-bottom: 14px;">
+                    Step C & D: Record Investigation Outcome
+                  </h4>
+
+                  <form onsubmit="event.preventDefault(); submitFailureInvestigation();">
+                    <div class="form-group">
+                      <label class="form-label">Failure Classification Type</label>
+                      <select class="form-select" id="inv-failure-type">
+                        <option value="USER_REPORTED_FAILURE">User-Reported Failure (Unverified Power Loss)</option>
+                        <option value="PHYSICAL_DAMAGE">Structural Physical Damage (Shattered Glass / Delamination)</option>
+                        <option value="ELECTRICAL_COLLAPSE">Electrical Diagnostic Failure (I-V Collapse / Open Circuit)</option>
+                        <option value="HOTSPOT_BURN">Severe Thermal Hotspot Dissipation</option>
+                        <option value="SUSPECTED_DEGRADATION">Suspected Chronic Yield Degradation</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Recommended Action Decision</label>
+                      <select class="form-select" id="inv-decision" onchange="toggleRetirementFields()">
+                        <option value="FURTHER_INSPECTION">Further Inspection (Schedule High-Res IRT Thermography)</option>
+                        <option value="ELECTRICAL_VERIFICATION">Electrical Verification by Qualified Electrician (I-V Sweep)</option>
+                        <option value="REPAIR">Repair Assessment (Bypass Diode / Junction Box Replacement)</option>
+                        <option value="CONTINUED_MONITORING">Continued Monitoring (Nominal Yield Intact)</option>
+                        <option value="RETIRE">Retirement Assessment & Responsible Recycling</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group" id="inv-retirement-wrap" style="display: none;">
+                      <label class="form-label" style="color: var(--rose);">Retirement Confirmation Date</label>
+                      <input type="date" class="form-input" id="inv-retirement-date">
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Engineering Findings & Notes</label>
+                      <textarea class="form-input" id="inv-notes" rows="4" placeholder="Detail the physical inspection observations, string voltage measurements, and rationale for repair vs retirement..." style="resize: vertical; font-size: 15px;"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="inv-submit-btn" style="width: 100%; height: 44px;">
+                      <i class="fa-solid fa-floppy-disk"></i> Save Investigation Outcome
+                    </button>
+                  </form>
+                </div>
+              </div>
+
+              <!-- Past Investigations Log Table -->
+              <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-subtle);">
+                <h4 style="font-family: var(--font-heading); font-size: 18px; font-weight: 600; color: #fff; margin-bottom: 12px;">
+                  Active & Completed Failure Investigations
+                </h4>
+                <div id="inv-history-table-wrap">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUB-VIEW 3: SOLAR PANEL RECYCLING ADVISOR -->
+          <div id="ast-subview-recycle" class="ast-subview" style="display: none;">
+            <div class="card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px;">
+                <div>
+                  <h3 style="font-family: var(--font-heading); font-size: 22px; font-weight: 600; color: #fff;">
+                    Responsible 8-Stage Solar Panel Recycling Advisor
+                  </h3>
+                  <p style="font-size: 15px; color: var(--text-muted); line-height: 1.5;">
+                    End-of-life circular economy workflow for retired modules. Landfilling solar panels is prohibited under environmental mandates.
+                  </p>
+                </div>
+                <div>
+                  <span class="badge" style="background: rgba(16,185,129,0.15); color: #34d399;">CIRCULAR PV RECOVERY</span>
+                </div>
+              </div>
+
+              <!-- Module Material Breakdown Information -->
+              <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 22px;">
+                <div class="telemetry-item" style="border-left: 3px solid #60a5fa;">
+                  <div class="telemetry-label">Solar Glass (75%)</div>
+                  <div class="telemetry-value" style="font-size: 16px; color: #fff;">Cullet / Remelt</div>
+                  <div style="font-size: 13px; color: var(--text-secondary);">Recyclable into container glass</div>
+                </div>
+                <div class="telemetry-item" style="border-left: 3px solid #34d399;">
+                  <div class="telemetry-label">Aluminum Frame (10%)</div>
+                  <div class="telemetry-value" style="font-size: 16px; color: #fff;">100% Circular</div>
+                  <div style="font-size: 13px; color: var(--text-secondary);">Infinite remelt without loss</div>
+                </div>
+                <div class="telemetry-item" style="border-left: 3px solid #c084fc;">
+                  <div class="telemetry-label">Silicon Wafers (5%)</div>
+                  <div class="telemetry-value" style="font-size: 16px; color: #fff;">Metallurgical Grade</div>
+                  <div style="font-size: 13px; color: var(--text-secondary);">Thermal delamination recovery</div>
+                </div>
+                <div class="telemetry-item" style="border-left: 3px solid #fbbf24;">
+                  <div class="telemetry-label">Copper & Silver (1%)</div>
+                  <div class="telemetry-value" style="font-size: 16px; color: #fff;">Precious Metals</div>
+                  <div style="font-size: 13px; color: var(--text-secondary);">Chemical refining recovery</div>
+                </div>
+                <div class="telemetry-item" style="border-left: 3px solid #f87171;">
+                  <div class="telemetry-label">EVA Polymers (9%)</div>
+                  <div class="telemetry-value" style="font-size: 16px; color: #fff;">Energy Recovery</div>
+                  <div style="font-size: 13px; color: var(--text-secondary);">Thermal pyrolysis handling</div>
+                </div>
+              </div>
+
+              <!-- 8-Stage Interactive Stepper -->
+              <div class="ast-recycling-stepper" id="ast-recycling-stepper">
+                <!-- Populated dynamically with 8 progressive stages -->
+              </div>
+
+              <!-- Recycling Action Form & Verification Record -->
+              <div style="margin-top: 24px; padding: 18px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid var(--border-subtle);">
+                <h4 style="font-family: var(--font-heading); font-size: 18px; font-weight: 600; color: #fff; margin-bottom: 12px;">
+                  Update Recycling Progress for <span id="rcy-panel-title">SP-001</span>
+                </h4>
+
+                <form onsubmit="event.preventDefault(); submitRecyclingProgress();" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px;">
+                  <div class="form-group">
+                    <label class="form-label">Current Recycling Stage</label>
+                    <select class="form-select" id="rcy-stage-select">
+                      <option value="1">Stage 1 — Failure & Retirement Confirmation</option>
+                      <option value="2">Stage 2 — Safe Decommissioning by Certified Personnel</option>
+                      <option value="3">Stage 3 — Material & Quantity Manifest</option>
+                      <option value="4">Stage 4 — Manufacturer Take-Back Check</option>
+                      <option value="5">Stage 5 — Certified Recycler Selection</option>
+                      <option value="6">Stage 6 — Packaging & Logistics Handover</option>
+                      <option value="7">Stage 7 — Recycling Documentation & Certificate</option>
+                      <option value="8">Stage 8 — Complete Circular Recycling Confirmation</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">Stage Status</label>
+                    <select class="form-select" id="rcy-status-select">
+                      <option value="IN_PROGRESS">In Progress</option>
+                      <option value="AWAITING_COLLECTION">Awaiting Collection</option>
+                      <option value="HANDED_OVER">Handed Over / In Transit</option>
+                      <option value="COMPLETED">Completed & Verified</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">Operating Region / City</label>
+                    <input type="text" class="form-input" id="rcy-region" placeholder="e.g. California, US or Munich, DE">
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">Authorized Recycler / Provider Name</label>
+                    <input type="text" class="form-input" id="rcy-provider-name" placeholder="e.g. SEIA Certified PV Recycler / Echo Environmental">
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">Recycler Contact / Phone / Email</label>
+                    <input type="text" class="form-input" id="rcy-provider-contact" placeholder="e.g. logistics@pv-recycle.org">
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">Certificate / Destruction Receipt Ref #</label>
+                    <input type="text" class="form-input" id="rcy-cert-ref" placeholder="e.g. CERT-RCY-2026-9921">
+                  </div>
+
+                  <div style="grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px;">
+                    <button type="submit" class="btn btn-primary" id="rcy-submit-btn">
+                      <i class="fa-solid fa-check"></i> Update Recycling Stage Record
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUB-VIEW 4: SMART MAINTENANCE REMINDERS -->
+          <div id="ast-subview-reminders" class="ast-subview" style="display: none;">
+            <div class="card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                <div>
+                  <h3 style="font-family: var(--font-heading); font-size: 22px; font-weight: 600; color: #fff;">
+                    Smart Maintenance Due-Date & Overdue Reminders
+                  </h3>
+                  <p style="font-size: 15px; color: var(--text-muted); line-height: 1.5;">
+                    Real-time schedule tracking across field service work orders. Prevent accelerated degradation through prompt servicing.
+                  </p>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                  <button class="btn btn-outline" onclick="loadMaintenanceReminders()"><i class="fa-solid fa-arrows-rotate"></i> Refresh Schedule</button>
+                </div>
+              </div>
+
+              <!-- Reminders KPI Summary Cards -->
+              <div class="kpi-grid" style="margin-bottom: 20px;">
+                <div class="card card-kpi" style="--kpi-color: var(--rose);">
+                  <div class="kpi-header">
+                    <span class="kpi-title">Overdue Tasks</span>
+                    <div class="kpi-icon-wrap"><i class="fa-solid fa-circle-exclamation"></i></div>
+                  </div>
+                  <div class="kpi-value" id="rem-count-overdue" style="color: var(--rose);">0</div>
+                  <div class="kpi-sub"><span>Requires immediate field dispatch</span></div>
+                </div>
+
+                <div class="card card-kpi" style="--kpi-color: var(--amber);">
+                  <div class="kpi-header">
+                    <span class="kpi-title">Due Today</span>
+                    <div class="kpi-icon-wrap"><i class="fa-solid fa-calendar-day"></i></div>
+                  </div>
+                  <div class="kpi-value" id="rem-count-today" style="color: var(--amber);">0</div>
+                  <div class="kpi-sub"><span>Scheduled for today's shift</span></div>
+                </div>
+
+                <div class="card card-kpi" style="--kpi-color: var(--primary);">
+                  <div class="kpi-header">
+                    <span class="kpi-title">Due Soon (≤ 7 Days)</span>
+                    <div class="kpi-icon-wrap"><i class="fa-solid fa-calendar-week"></i></div>
+                  </div>
+                  <div class="kpi-value" id="rem-count-soon" style="color: var(--primary);">0</div>
+                  <div class="kpi-sub"><span>Upcoming scheduled tasks</span></div>
+                </div>
+
+                <div class="card card-kpi" style="--kpi-color: var(--emerald);">
+                  <div class="kpi-header">
+                    <span class="kpi-title">Completed Tasks</span>
+                    <div class="kpi-icon-wrap"><i class="fa-solid fa-circle-check"></i></div>
+                  </div>
+                  <div class="kpi-value" id="rem-count-completed" style="color: var(--emerald);">0</div>
+                  <div class="kpi-sub"><span>Verified service closures</span></div>
+                </div>
+              </div>
+
+              <!-- Filter Buttons -->
+              <div style="display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap;">
+                <button class="btn btn-outline rem-filter-btn active" data-filter="ALL" onclick="filterReminders('ALL')">All Work Orders</button>
+                <button class="btn btn-outline rem-filter-btn" data-filter="OVERDUE" onclick="filterReminders('OVERDUE')" style="color: #f87171;">Overdue Only</button>
+                <button class="btn btn-outline rem-filter-btn" data-filter="DUE_TODAY" onclick="filterReminders('DUE_TODAY')" style="color: #fbbf24;">Due Today</button>
+                <button class="btn btn-outline rem-filter-btn" data-filter="DUE_SOON" onclick="filterReminders('DUE_SOON')" style="color: #38bdf8;">Due Soon</button>
+                <button class="btn btn-outline rem-filter-btn" data-filter="COMPLETED" onclick="filterReminders('COMPLETED')" style="color: #34d399;">Completed</button>
+              </div>
+
+              <!-- Reminders Table -->
+              <div class="table-card" style="border: 1px solid var(--border-subtle); border-radius: 8px; overflow: hidden;">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>Task ID</th>
+                      <th>Target Asset</th>
+                      <th>Maintenance Title</th>
+                      <th>Scheduled Target</th>
+                      <th>Reminder Status</th>
+                      <th>Priority</th>
+                      <th>Assigned Technician</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="reminders-table-body">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ==================================================================
+             TAB: INFRARED THERMOGRAPHY (IRT) THERMAL INSPECTION
+             IEC TS 62446-3 Thermographic Standards Compliant
+             ================================================================== -->
+        <section id="tab-thermal" class="tab-panel">
+          
+          <!-- Physics Compliance & Standards Alert -->
+          <div class="thermal-physics-banner">
+            <div class="thermal-physics-icon">
+              <i class="fa-solid fa-temperature-arrow-up"></i>
+            </div>
+            <div class="thermal-physics-content">
+              <h4>IEC TS 62446-3 Photovoltaic Thermography Compliance</h4>
+              <p>Actual temperature differences (&Delta;T) are calculated <strong>strictly from calibrated thermal data</strong>. Ordinary visible RGB images lack spectral radiance data; this system refuses to fabricate artificial temperatures from uncalibrated photos.</p>
+            </div>
+            <div class="thermal-physics-badge">
+              <span class="badge" style="background: rgba(16,185,129,0.15); color: var(--emerald); border: 1px solid rgba(16,185,129,0.3); font-size: 13px; padding: 4px 10px;">
+                <i class="fa-solid fa-certificate"></i> CALIBRATED DATA ONLY
+              </span>
+            </div>
+          </div>
+
+          <!-- Main Layout: 2 Columns (Left Controls, Right Thermal Viewport & Radiometry) -->
+          <div style="display: grid; grid-template-columns: 380px 1fr; gap: 24px; margin-bottom: 28px;">
+            
+            <!-- LEFT COLUMN: CONTROLS & INGESTION -->
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+              
+              <!-- 1. Calibrated Demonstration Samples -->
+              <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                  <h4 style="font-family: var(--font-heading); font-size: 18px; font-weight: 600; color: var(--text-light);">
+                    <i class="fa-solid fa-images" style="color: var(--primary); margin-right: 6px;"></i> Reference Thermal Frames
+                  </h4>
+                  <span class="badge" style="background: rgba(245,158,11,0.15); color: #fbbf24; font-size: 13px; padding: 3px 8px;">DEMO DATA</span>
+                </div>
+                <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;">
+                  Select a pre-calibrated radiometric frame with ground-truth temperature matrices:
+                </p>
+                <div id="thermal-sample-list" style="display: flex; flex-direction: column; gap: 8px;">
+                  <!-- Dynamically populated with 5 reference samples -->
+                </div>
+              </div>
+
+              <!-- 2. Custom Thermal Image Upload -->
+              <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                  <h4 style="font-family: var(--font-heading); font-size: 18px; font-weight: 600; color: var(--text-light);">
+                    <i class="fa-solid fa-cloud-arrow-up" style="color: var(--primary); margin-right: 6px;"></i> Ingest Thermal Image
+                  </h4>
+                  <span style="font-size: 13px; color: var(--text-dim);">PNG, JPG, TIFF</span>
+                </div>
+
+                <div class="thermal-dropzone" id="thermal-dropzone" onclick="document.getElementById('thermal-file-input').click()">
+                  <i class="fa-solid fa-camera-retro thermal-drop-icon"></i>
+                  <span style="font-size: 15px; font-weight: 600; color: var(--text-light);">Click or drop thermal image</span>
+                  <span style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Supports radiometric captures & FLIR exports</span>
+                  <input type="file" id="thermal-file-input" accept="image/*" style="display: none;">
+                </div>
+                <div id="thermal-selected-file-label" style="display: none; margin-top: 8px; font-size: 13px; color: var(--primary); font-family: monospace;"></div>
+
+                <div class="form-group" style="margin-top: 14px; margin-bottom: 0;">
+                  <label class="form-label" for="thermal-panel-select">Target Photovoltaic Module</label>
+                  <select class="form-select" id="thermal-panel-select">
+                    <option value="SP-001">SP-001 - Array Alpha 01 (Mono-PERC 400W)</option>
+                    <option value="SP-002">SP-002 - Array Alpha 02 (Mono-PERC 400W)</option>
+                    <option value="SP-003">SP-003 - Array Beta 01 (Polycrystalline 350W)</option>
+                    <option value="SP-004">SP-004 - Array Beta 02 (Bifacial Dual-Glass 450W)</option>
+                    <option value="SP-005">SP-005 - Array Gamma 01 (Mono-PERC 400W)</option>
+                    <option value="SP-006">SP-006 - Array Gamma 02 (Bifacial 450W)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- 3. Radiometric Calibration Controls -->
+              <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                  <h4 style="font-family: var(--font-heading); font-size: 18px; font-weight: 600; color: var(--text-light);">
+                    <i class="fa-solid fa-sliders" style="color: var(--primary); margin-right: 6px;"></i> Calibration Parameters
+                  </h4>
+                  <label class="switch-wrap" title="Toggle calibration mode">
+                    <input type="checkbox" id="thermal-is-calibrated-toggle" checked>
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+
+                <div id="thermal-calib-inputs-box">
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                    <div>
+                      <label class="form-label" style="font-size: 14px;">Span T<sub>min</sub> (°C)</label>
+                      <input type="number" class="form-input" id="thermal-input-tmin" value="25.0" step="0.5" style="height: 40px; font-size: 15px;">
+                    </div>
+                    <div>
+                      <label class="form-label" style="font-size: 14px;">Span T<sub>max</sub> (°C)</label>
+                      <input type="number" class="form-input" id="thermal-input-tmax" value="75.0" step="0.5" style="height: 40px; font-size: 15px;">
+                    </div>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+                    <div>
+                      <label class="form-label" style="font-size: 14px;">Emissivity (&epsilon;)</label>
+                      <input type="number" class="form-input" id="thermal-input-emissivity" value="0.95" step="0.01" min="0.1" max="1.0" style="height: 40px; font-size: 15px;">
+                    </div>
+                    <div>
+                      <label class="form-label" style="font-size: 14px;">Ambient T<sub>amb</sub> (°C)</label>
+                      <input type="number" class="form-input" id="thermal-input-ambient" value="25.0" step="0.5" style="height: 40px; font-size: 15px;">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 14px;">
+                  <label class="form-label" style="font-size: 14px;">Thermal Colormap Palette</label>
+                  <select class="form-select" id="thermal-colormap-select" style="height: 40px; font-size: 15px;">
+                    <option value="IRONBOW">IRONBOW (Classic FLIR Hot - Red/Orange/Yellow)</option>
+                    <option value="RAINBOW_JET">RAINBOW_JET (High-Contrast Jet Spectrum)</option>
+                    <option value="INFERNO">INFERNO (Deep Violet to Golden Yellow)</option>
+                    <option value="TURBO">TURBO (Perceptually Uniform HDR)</option>
+                    <option value="WHITE_HOT">WHITE_HOT (Linear Grayscale - Hot is White)</option>
+                    <option value="BLACK_HOT">BLACK_HOT (Inverted Grayscale - Hot is Black)</option>
+                  </select>
+                </div>
+
+                <button class="btn btn-primary" id="run-thermal-inspect-btn" style="width: 100%; height: 44px; font-weight: 700;">
+                  <i class="fa-solid fa-crosshairs"></i> Run Radiometric Inspection
+                </button>
+              </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN: THERMAL HUD VIEWPORT & RADIOMETRIC TELEMETRY -->
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+              
+              <!-- Thermal Viewport & Interactive Temperature Probe -->
+              <div class="card" style="padding: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                  <div>
+                    <h4 style="font-family: var(--font-heading); font-size: 18px; font-weight: 600; color: var(--text-light);">
+                      Thermal Radiometric Viewport
+                    </h4>
+                    <span style="font-size: 14px; color: var(--text-secondary);" id="thermal-viewport-sub">Move cursor over panel for live point temperature probing</span>
+                  </div>
+
+                  <div style="display: flex; gap: 8px; align-items: center;">
+                    <span class="badge" id="thermal-status-pill" style="background: rgba(0,240,255,0.1); color: var(--primary);">
+                      CALIBRATED RADIOMETRIC
+                    </span>
+                    <span class="badge" id="thermal-colormap-pill" style="background: rgba(255,255,255,0.06); color: var(--text-muted);">
+                      PALETTE: IRONBOW
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Uncalibrated Notice Banner -->
+                <div id="thermal-uncalibrated-warning" style="display: none; background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); border-radius: 8px; padding: 12px; margin-bottom: 12px;">
+                  <div style="display: flex; gap: 10px; align-items: flex-start;">
+                    <i class="fa-solid fa-triangle-exclamation" style="color: #fbbf24; font-size: 16px; margin-top: 2px;"></i>
+                    <div style="font-size: 14px; line-height: 1.5; color: #fde68a;">
+                      <strong>Uncalibrated Optical Image:</strong> Quantitative temperatures and &Delta;T cannot be derived without calibrated sensor bounds (T<sub>min</sub>, T<sub>max</sub>) or radiometric metadata. Standard RGB visible light reflects optical wavelengths rather than physical temperature. Synthetic values will not be fabricated.
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Viewport Container with Interactive Probe Overlay -->
+                <div class="thermal-viewport-wrap" id="thermal-viewport-wrap">
+                  <img id="thermal-viewport-img" src="/data/thermal_samples/thermal_hotspot_cell.png" alt="Thermal Viewport" class="thermal-viewport-img">
+                  
+                  <!-- Interactive Reticle Crosshair -->
+                  <div id="thermal-probe-crosshair" class="thermal-probe-crosshair" style="display: none;">
+                    <div class="ch-line-h"></div>
+                    <div class="ch-line-v"></div>
+                    <div class="ch-circle"></div>
+                  </div>
+
+                  <!-- Dynamic Floating Probe Readout HUD -->
+                  <div id="thermal-probe-hud" class="thermal-probe-hud">
+                    <i class="fa-solid fa-bullseye" style="color: var(--primary);"></i>
+                    <span id="thermal-probe-text">Hover over image to probe temperature (°C)</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Quantitative Thermal Telemetry (IEC TS 62446-3 Metrics) -->
+              <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                  <h4 style="font-family: var(--font-heading); font-size: 18px; font-weight: 600;">
+                    Quantitative Radiometric Telemetry
+                  </h4>
+                  <span class="badge" style="background: rgba(16,185,129,0.1); color: var(--emerald);">IEC TS 62446-3 COMPLIANT</span>
+                </div>
+
+                <div class="kpi-grid" style="margin-bottom: 18px;">
+                  <div class="telemetry-item">
+                    <div class="telemetry-label">Max Hotspot Temp (T<sub>max</sub>)</div>
+                    <div class="telemetry-value" id="thermal-metric-tmax" style="color: var(--rose);">71.2 °C</div>
+                  </div>
+                  <div class="telemetry-item">
+                    <div class="telemetry-label">Nominal Baseline (T<sub>nom</sub>)</div>
+                    <div class="telemetry-value" id="thermal-metric-tnom" style="color: var(--primary);">41.0 °C</div>
+                  </div>
+                  <div class="telemetry-item">
+                    <div class="telemetry-label">Actual Temp Delta (&Delta;T)</div>
+                    <div class="telemetry-value" id="thermal-metric-deltat" style="color: var(--amber);">+30.2 °C</div>
+                  </div>
+                  <div class="telemetry-item">
+                    <div class="telemetry-label">IEC TS 62446-3 Defect Class</div>
+                    <div class="telemetry-value" id="thermal-metric-iec" style="font-size: 16px; color: var(--rose);">Class 2 (Significant)</div>
+                  </div>
+                </div>
+
+                <!-- Defect Diagnosis & Remediation Box -->
+                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 16px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <span class="badge" id="thermal-anomaly-badge" style="background: rgba(239,68,68,0.2); color: #f87171;">HOTSPOT</span>
+                      <strong id="thermal-panel-title" style="font-size: 16px;">SP-001 - Array Alpha 01</strong>
+                    </div>
+                    <button class="btn btn-primary btn-sm" id="thermal-dispatch-btn" onclick="openThermalWorkOrderModal()">
+                      <i class="fa-solid fa-wrench"></i> Dispatch Field Work Order
+                    </button>
+                  </div>
+
+                  <div style="margin-bottom: 8px; font-size: 14px; color: var(--text-secondary); line-height: 1.5;">
+                    <strong style="color: var(--text-main);">Why Flagged:</strong>
+                    <span id="thermal-why-flagged">Localized cell hotspot with high thermal gradient in monocrystalline wafer exceeding IEC Class 2 threshold (+10°C to +30°C).</span>
+                  </div>
+
+                  <div style="font-size: 14px; color: var(--text-secondary); line-height: 1.5;">
+                    <strong style="color: var(--text-main);">Recommended Action:</strong>
+                    <span id="thermal-rec-action">Dispatch field technician to inspect cell integrity; measure localized power drop and thermal dissipation rate.</span>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Bottom: Persistent Thermal Inspection History (SQLite) -->
+          <div class="card table-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+              <div>
+                <h4 style="font-family: var(--font-heading); font-size: 18px; font-weight: 600;">
+                  Thermal Radiometric Inspection History
+                </h4>
+                <p style="font-size: 14px; color: var(--text-muted); line-height: 1.4;">Persistent records stored in SQLite thermal_inspections table with calibrated delta-T metrics</p>
+              </div>
+
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <a href="/api/thermal/export/csv" class="btn btn-outline btn-sm" download>
+                  <i class="fa-solid fa-file-csv" style="color: var(--primary);"></i> Export IRT CSV
+                </a>
+                <button class="btn btn-outline btn-sm" onclick="loadThermalHistory()">
+                  <i class="fa-solid fa-rotate"></i> Refresh History
+                </button>
+                <button class="btn btn-outline btn-sm" onclick="clearThermalHistory()" style="color: var(--rose); border-color: rgba(244,63,94,0.3);">
+                  <i class="fa-solid fa-trash"></i> Clear History
+                </button>
+              </div>
+            </div>
+
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th># ID</th>
+                  <th>Timestamp</th>
+                  <th>Target Panel</th>
+                  <th>Calibration Status</th>
+                  <th>Colormap</th>
+                  <th>Max Temp (T<sub>max</sub>)</th>
+                  <th>Baseline (T<sub>nom</sub>)</th>
+                  <th>Temp Delta (&Delta;T)</th>
+                  <th>IEC TS 62446-3</th>
+                  <th>Anomaly Type</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="thermal-history-table-body">
+                <!-- Dynamically populated from SQLite -->
+              </tbody>
+            </table>
+          </div>
+
+        </section>
+
+        <!-- ==================================================================
+             TAB: ELECTRICAL FAULT DIAGNOSIS & I-V CURVE ANALYSIS (IEC 60891)
+             ================================================================== -->
+        <section id="tab-electrical" class="tab-panel">
+          
+          <!-- Physics & Photovoltaic Standards Banner -->
+          <div class="elec-physics-banner">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+                  <span class="badge" style="background: rgba(16,185,129,0.2); color: #34d399; font-weight: 700; letter-spacing: 0.5px;">
+                    <i class="fa-solid fa-bolt"></i> IEC 60891 / IEC 61724 ELECTRICAL DIAGNOSTICS
+                  </span>
+                  <span class="badge" style="background: rgba(255,255,255,0.06); color: var(--text-muted); font-size: 13px; padding: 4px 8px;">
+                    v1.0-rules (STC Normalization & I-V Curve Tracer)
+                  </span>
+                </div>
+                <h3 style="font-family: var(--font-heading); font-size: 22px; font-weight: 600; color: #fff; margin: 0 0 6px 0;">
+                  Electrical Fault Diagnostics & I–V Curve Analysis
+                </h3>
+                <p style="font-size: 15px; color: var(--text-muted); max-width: 820px; margin: 0; line-height: 1.5;">
+                  Evaluates module and string electrical operating signatures. Calculates active power <strong style="color: #34d399;">P = V × I</strong>,
+                  derates against Standard Test Conditions (STC: 1000 W/m², 25°C), traces multi-point <strong style="color: #60a5fa;">I–V and P–V curves</strong>,
+                  and detects bypass diode conduction steps, soiling current deficits, and parasitic series/shunt resistance degradation.
+                </p>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="system-pill" style="border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.08);">
+                  <div class="pulse-dot" style="background: #34d399;"></div>
+                  <span style="color: #34d399; font-weight: 700;">IEC 60891 ENGINE ACTIVE</span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Workspace Grid: Controls & Visualizations -->
+          <div style="display: grid; grid-template-columns: 380px 1fr; gap: 24px; align-items: start;">
+            
+            <!-- LEFT COLUMN: Controls & Data Ingestion -->
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+              
+              <!-- 0. Fully Automatic Electrical Ingestion Actions -->
+              <div class="card" style="padding: 16px; background: linear-gradient(135deg, rgba(16,185,129,0.12) 0%, rgba(15,23,42,0.95) 100%); border: 1px solid rgba(16,185,129,0.35);">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                  <span class="badge" style="background: rgba(16,185,129,0.25); color: #34d399; font-weight: 700; font-size: 13px; padding: 3px 8px;">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> ZERO-ENTRY AUTOMATION
+                  </span>
+                  <span style="font-size: 13px; color: var(--text-dim);">No manual typing</span>
+                </div>
+                <h4 style="font-family: var(--font-heading); font-size: 18px; font-weight: 600; color: #fff; margin: 0 0 6px 0;">
+                  Automated Electrical Ingestion
+                </h4>
+                <p style="font-size: 14px; color: var(--text-muted); margin: 0 0 14px 0; line-height: 1.5;">
+                  Upload your I–V curve tracer file or operating log CSV. SolarShield automatically detects columns, validates units, calculates <strong style="color: #34d399;">P = V × I</strong>, and derives diagnostics instantly.
+                </p>
+
+                <!-- Hidden file input for automatic upload -->
+                <input type="file" id="elec-auto-file-input" accept=".csv,text/csv" style="display: none;" onchange="handleAutoElectricalUpload(event)">
+
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                  <button type="button" class="btn btn-primary" id="btn-elec-auto-upload" style="height: 44px; width: 100%; font-weight: 700; background: linear-gradient(135deg, #059669 0%, #10b981 100%); border-color: #34d399; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="document.getElementById('elec-auto-file-input').click()">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Upload and Analyze Automatically
+                  </button>
+
+                  <button type="button" class="btn btn-outline" id="btn-elec-auto-sample" style="height: 38px; width: 100%; font-weight: 600; color: #38bdf8; border-color: rgba(56,189,248,0.4); display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="loadAndAutoAnalyzeSample()">
+                    <i class="fa-solid fa-flask-vial"></i> Load Sample Dataset (Demo)
+                  </button>
+                </div>
+              </div>
+
+              <!-- 1. Mode Switcher -->
+              <div class="card" style="padding: 14px;">
+                <label class="form-label" style="margin-bottom: 8px; font-size: 14px; font-weight: 600; color: var(--text-secondary);">
+                  Measurement Acquisition Mode
+                </label>
+                <div class="elec-mode-switcher">
+                  <button type="button" class="elec-mode-btn active" id="elec-mode-manual-btn" onclick="switchElectricalMode('manual')">
+                    <i class="fa-solid fa-pen-to-square"></i> Manual / Meter
+                  </button>
+                  <button type="button" class="elec-mode-btn" id="elec-mode-csv-btn" onclick="switchElectricalMode('csv')">
+                    <i class="fa-solid fa-file-csv"></i> CSV Upload
+                  </button>
+                </div>
+              </div>
+
+              <!-- 2. Target Solar Panel / String Selector -->
+              <div class="card">
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label class="form-label" for="elec-panel-select">
+                    <i class="fa-solid fa-table-cells" style="color: #34d399; margin-right: 6px;"></i> Target Module / String
+                  </label>
+                  <select class="form-select" id="elec-panel-select" onchange="onElectricalPanelChange()">
+                    <option value="SP-001">SP-001 - Array Alpha 01 (Mono-PERC 420W)</option>
+                    <option value="SP-002">SP-002 - Array Alpha 02 (Mono-PERC 420W)</option>
+                    <option value="SP-003">SP-003 - Array Beta 01 (Polycrystalline 380W)</option>
+                    <option value="SP-004">SP-004 - Array Beta 02 (Bifacial Dual-Glass 450W)</option>
+                    <option value="SP-005">SP-005 - Array Gamma 01 (Mono-PERC 420W)</option>
+                    <option value="SP-006">SP-006 - Array Gamma 02 (Bifacial 450W)</option>
+                  </select>
+                  <div style="font-size: 13px; color: var(--text-dim); margin-top: 6px;">
+                    Benchmarked against rated specifications from fleet database
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3. Calibrated Reference Datasets -->
+              <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                  <h4 style="font-family: var(--font-heading); font-size: 18px; font-weight: 600; color: var(--text-light);">
+                    <i class="fa-solid fa-microscope" style="color: #34d399; margin-right: 6px;"></i> Reference Datasets
+                  </h4>
+                  <span class="badge" style="background: rgba(16,185,129,0.15); color: #34d399; font-size: 13px; padding: 3px 8px;">BENCHMARK I–V</span>
+                </div>
+                <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 10px; line-height: 1.4;">
+                  1-Click load calibrated I–V curve sweeps representing standard electrical fault signatures:
+                </p>
+                <div id="elec-samples-list" style="display: flex; flex-direction: column; gap: 8px;">
+                  <!-- Populated via JavaScript loadElectricalSamples() -->
+                </div>
+              </div>
+
+              <!-- 4A. Manual Entry Form (Active by default) -->
+              <div class="card" id="elec-manual-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                  <h4 style="font-family: var(--font-heading); font-size: 18px; font-weight: 600; color: var(--text-light);">
+                    <i class="fa-solid fa-gauge-high" style="color: #34d399; margin-right: 6px;"></i> Instrument Measurements
+                  </h4>
+                  <span style="font-size: 13px; color: var(--text-dim);">IEC 62446 Testing</span>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label" for="elec-input-voltage">Voltage (V) *</label>
+                    <input type="number" step="0.01" class="form-input" id="elec-input-voltage" placeholder="e.g. 41.5" required>
+                  </div>
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label" for="elec-input-current">Current (A) *</label>
+                    <input type="number" step="0.01" class="form-input" id="elec-input-current" placeholder="e.g. 10.12" required>
+                  </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 12px;">
+                  <label class="form-label" for="elec-input-power" style="display: flex; justify-content: space-between;">
+                    <span>Measured Power (W)</span>
+                    <span style="color: var(--text-dim); font-size: 13px;">Optional (from Meter/Inverter)</span>
+                  </label>
+                  <input type="number" step="0.1" class="form-input" id="elec-input-power" placeholder="Auto-calculated if blank (P = V × I)">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label" for="elec-input-irradiance">Irradiance (W/m²)</label>
+                    <input type="number" step="1" class="form-input" id="elec-input-irradiance" placeholder="e.g. 1000">
+                  </div>
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label" for="elec-input-temp">Module Temp (°C)</label>
+                    <input type="number" step="0.1" class="form-input" id="elec-input-temp" placeholder="e.g. 25.0">
+                  </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label" for="elec-input-amb-temp">Ambient Temp (°C)</label>
+                    <input type="number" step="0.1" class="form-input" id="elec-input-amb-temp" placeholder="e.g. 22.0">
+                  </div>
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label" for="elec-input-source">Instrument Source</label>
+                    <select class="form-select" id="elec-input-source">
+                      <option value="HANDHELD_MULTIMETER">Handheld Multimeter</option>
+                      <option value="INVERTER_MPPT">Inverter MPPT Telemetry</option>
+                      <option value="STRING_COMBINER_BOX">String Combiner Box Sensor</option>
+                      <option value="IV_CURVE_TRACER_HT">I-V Curve Tracer (HT Instruments)</option>
+                      <option value="SEAWARD_PV200">Seaward PV200 Solar Tester</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label class="form-label" for="elec-input-notes">Operating Conditions & Remarks</label>
+                  <input type="text" class="form-input" id="elec-input-notes" placeholder="e.g. Clear sky, no visible shading, post-wash">
+                </div>
+              </div>
+
+              <!-- 4B. CSV Upload Form (Hidden until CSV mode active) -->
+              <div class="card" id="elec-csv-card" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                  <h4 style="font-family: var(--font-heading); font-size: 18px; font-weight: 600; color: var(--text-light);">
+                    <i class="fa-solid fa-file-import" style="color: #34d399; margin-right: 6px;"></i> Ingest Measurement CSV
+                  </h4>
+                  <a href="/api/electrical/template/csv" download class="btn btn-outline btn-sm" style="padding: 4px 10px; font-size: 13px; color: #34d399; border-color: rgba(16,185,129,0.3);">
+                    <i class="fa-solid fa-download"></i> Template
+                  </a>
+                </div>
+
+                <div class="elec-dropzone" id="elec-dropzone" onclick="document.getElementById('elec-csv-file-input').click()">
+                  <i class="fa-solid fa-cloud-arrow-up" style="font-size: 28px; color: #34d399;"></i>
+                  <span style="font-size: 15px; font-weight: 600; color: var(--text-light);">Click or drop Electrical CSV file</span>
+                  <span style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Accepts I–V curve sweeps & historical operating logs</span>
+                  <input type="file" id="elec-csv-file-input" accept=".csv,text/csv" style="display: none;">
+                </div>
+
+                <div id="elec-selected-csv-info" style="display: none; margin-top: 10px; padding: 10px; background: rgba(15,23,42,0.8); border: 1px solid var(--border-subtle); border-radius: var(--radius-md);">
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span id="elec-csv-filename-label" style="font-size: 13px; font-family: monospace; color: #34d399;"></span>
+                    <button class="btn btn-outline btn-sm" style="padding: 4px 8px; font-size: 13px;" onclick="resetElectricalCsvUpload()">
+                      <i class="fa-solid fa-xmark"></i>
+                    </button>
+                  </div>
+                  <div id="elec-csv-stats-label" style="font-size: 13px; color: var(--text-muted); margin-top: 4px;"></div>
+                </div>
+
+                <!-- Validation & Rejection Feedback Box -->
+                <div id="elec-csv-rejected-feedback" style="display: none; margin-top: 10px; padding: 10px; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: var(--radius-md); font-size: 13px; color: #f87171;">
+                </div>
+              </div>
+
+              <!-- 5. Action Controls -->
+              <div style="display: flex; gap: 10px;">
+                <button type="button" class="btn btn-primary" id="btn-elec-analyze" style="flex: 2; height: 42px; background: linear-gradient(135deg, #059669 0%, #10b981 100%); border-color: #34d399;" onclick="runElectricalDiagnosis()">
+                  <i class="fa-solid fa-bolt-lightning"></i> Analyze Measurements
+                </button>
+                <button type="button" class="btn btn-outline" id="btn-elec-reset" style="flex: 1; height: 42px;" onclick="resetElectricalForm()">
+                  <i class="fa-solid fa-rotate-left"></i> Reset
+                </button>
+              </div>
+
+              <!-- Processing Status Banner -->
+              <div id="elec-status-banner" style="display: none; padding: 12px; border-radius: var(--radius-md); font-size: 14px; align-items: center; gap: 8px;">
+                <i id="elec-status-icon" class="fa-solid fa-circle-notch fa-spin"></i>
+                <span id="elec-status-text">Processing electrical diagnostics...</span>
+              </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN: Visualizations, Findings & Telemetry -->
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+              
+              <!-- Empty State (Shown before analysis) -->
+              <div class="card empty-state" id="elec-empty-state" style="padding: 60px 30px; text-align: center;">
+                <div style="width: 72px; height: 72px; border-radius: 50%; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                  <i class="fa-solid fa-chart-line" style="font-size: 28px; color: #34d399;"></i>
+                </div>
+                <h4 style="font-family: var(--font-heading); font-size: 18px; font-weight: 600; color: #fff; margin-bottom: 6px;">
+                  Awaiting Electrical Telemetry Ingestion
+                </h4>
+                <p style="font-size: 14px; color: var(--text-muted); max-width: 480px; margin: 0 auto 18px; line-height: 1.5;">
+                  Select a reference dataset from the left panel, enter manual multimeter readings (V, I), or upload an I–V curve tracer CSV to run automated IEC 60891 fault diagnosis.
+                </p>
+                <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+                  <button class="btn btn-outline btn-sm" onclick="selectElectricalSampleByName('electrical_iv_nominal.csv')">
+                    <i class="fa-solid fa-play"></i> Load Nominal I–V Benchmark
+                  </button>
+                  <button class="btn btn-outline btn-sm" onclick="selectElectricalSampleByName('electrical_iv_bypass_diode.csv')">
+                    <i class="fa-solid fa-triangle-exclamation" style="color: #f87171;"></i> Load Bypass Diode Fault
+                  </button>
+                </div>
+              </div>
+
+              <!-- Results Container (Populated after analysis) -->
+              <div id="elec-results-container" style="display: none; flex-direction: column; gap: 20px;">
+                
+                <!-- 0. Data Source & Hardware Safety Banner -->
+                <div class="card" style="padding: 12px 18px; background: rgba(15,23,42,0.92); border: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                  <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                    <span style="font-size: 14px; color: var(--text-secondary); font-weight: 600;">Data Source:</span>
+                    <span id="elec-res-datasource-badge" class="badge" style="background: rgba(16,185,129,0.2); color: #34d399; font-weight: 700; font-size: 13px; padding: 4px 10px;">
+                      <i class="fa-solid fa-file-csv"></i> REAL MEASUREMENTS (Upload)
+                    </span>
+                    <span id="elec-res-filename-badge" style="font-size: 13px; font-family: monospace; color: var(--text-muted);">
+                      --
+                    </span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary);">
+                    <i class="fa-solid fa-shield-halved" style="color: #60a5fa;"></i>
+                    <span id="elec-safety-disclaimer-text">Software data diagnostic — No physical live sensors connected</span>
+                  </div>
+                </div>
+
+                <!-- 0B. Extracted Input Telemetry & Validation Summary Card -->
+                <div class="card" id="elec-extracted-inputs-card" style="padding: 14px 18px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+                    <h4 style="font-family: var(--font-heading); font-size: 18px; font-weight: 600; color: var(--text-light); margin: 0;">
+                      <i class="fa-solid fa-file-lines" style="color: #38bdf8; margin-right: 6px;"></i> Extracted Input Values & Column Mapping
+                    </h4>
+                    <span id="elec-validation-status-badge" class="badge" style="background: rgba(16,185,129,0.15); color: #34d399; font-size: 13px; font-weight: 700; padding: 3px 8px;">
+                      VALIDATED
+                    </span>
+                  </div>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; font-size: 14px;">
+                    <div style="background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                      <div style="color: var(--text-secondary); font-size: 13px; font-weight: 600;">Analyzed Points</div>
+                      <div id="elec-input-points-count" style="font-weight: 700; color: #fff; font-size: 15px; margin-top: 2px;">--</div>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                      <div style="color: var(--text-secondary); font-size: 13px; font-weight: 600;">Detected Voltage Header & Unit</div>
+                      <div id="elec-detected-v-header" style="font-weight: 700; color: #34d399; font-family: monospace; font-size: 14px; margin-top: 2px;">--</div>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                      <div style="color: var(--text-secondary); font-size: 13px; font-weight: 600;">Detected Current Header & Unit</div>
+                      <div id="elec-detected-i-header" style="font-weight: 700; color: #38bdf8; font-family: monospace; font-size: 14px; margin-top: 2px;">--</div>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                      <div style="color: var(--text-secondary); font-size: 13px; font-weight: 600;">Operating Conditions</div>
+                      <div id="elec-detected-env-context" style="font-weight: 600; color: var(--text-muted); font-size: 14px; margin-top: 2px;">--</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 1. Diagnostic Summary Header Card -->
+                <div class="card" style="background: linear-gradient(135deg, rgba(15,23,42,0.95) 0%, rgba(9,13,22,0.9) 100%); border-color: rgba(16,185,129,0.3);">
+                  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; margin-bottom: 14px;">
+                    <div>
+                      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px; flex-wrap: wrap;">
+                        <span id="elec-res-panel-id" class="badge" style="background: rgba(255,255,255,0.08); color: #fff; font-weight: 800; font-size: 13px;">SP-001</span>
+                        <span id="elec-res-panel-name" style="font-size: 13px; color: var(--text-muted);">Array Alpha 01</span>
+                        <span id="elec-res-status-badge" class="badge badge-elec-nominal" style="font-size: 13px; font-weight: 700; padding: 4px 10px;">
+                          NOMINAL_OPERATION
+                        </span>
+                        <span id="elec-res-severity-badge" class="badge" style="background: rgba(52,199,89,0.15); color: #34c759; font-size: 13px; font-weight: 700; padding: 3px 8px;">
+                          SEVERITY: LOW
+                        </span>
+                      </div>
+                      <div style="font-size: 13px; color: var(--text-secondary); display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                        <span id="elec-res-timestamp">--</span>
+                        <span>•</span>
+                        <span id="elec-res-source">HANDHELD_MULTIMETER</span>
+                        <span>•</span>
+                        <span id="elec-res-score-type">Rule-Based Anomaly Index (IEC 60891)</span>
+                      </div>
+                    </div>
+
+                    <!-- Anomaly Index Score Gauge -->
+                    <div style="text-align: right; background: rgba(0,0,0,0.3); padding: 8px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+                      <div style="font-size: 13px; color: var(--text-secondary); font-weight: 600;">
+                        Electrical Anomaly Index
+                      </div>
+                      <div style="display: flex; align-items: baseline; justify-content: flex-end; gap: 4px; margin-top: 2px;">
+                        <span id="elec-res-anomaly-score" style="font-size: 32px; font-weight: 700; font-family: var(--font-heading); color: #34d399;">5.0</span>
+                        <span style="font-size: 14px; color: var(--text-dim);">/ 100</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Needs Review Notice (if evidence is incomplete) -->
+                  <div id="elec-needs-review-banner" style="display: none; padding: 10px 14px; background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.35); border-radius: var(--radius-md); font-size: 14px; color: #fbbf24; align-items: center; gap: 8px; margin-bottom: 12px;">
+                    <i class="fa-solid fa-circle-question"></i>
+                    <div>
+                      <strong>NEEDS REVIEW: </strong>
+                      <span id="elec-needs-review-reason">Missing concurrent irradiance or temperature data. Baseline normalized with standard reference assumptions.</span>
+                    </div>
+                  </div>
+
+                  <!-- Telemetry KPIs Grid -->
+                  <div class="elec-kpi-grid">
+                    <div class="elec-kpi-item primary-kpi" title="Instantaneous power calculated using P = V × I for operating points, or peak power Pmax = Vmp × Imp from an I-V sweep.">
+                      <span class="elec-kpi-label" id="elec-kpi-power-title">Calculated Power (P = V×I)</span>
+                      <span class="elec-kpi-val" id="elec-kpi-calc-power" style="color: #34d399;">-- W</span>
+                      <span class="elec-kpi-sub" id="elec-kpi-expected-power">Expected: -- W (STC)</span>
+                    </div>
+
+                    <div class="elec-kpi-item" title="Measured operating voltage at module terminals. For full I-V curve sweeps, Vmp is the voltage at the Maximum Power Point.">
+                      <span class="elec-kpi-label" id="elec-kpi-voltage-title">Operating Voltage (V)</span>
+                      <span class="elec-kpi-val" id="elec-kpi-voltage">-- V</span>
+                      <span class="elec-kpi-sub" id="elec-kpi-expected-vmp">Expected Vmp: -- V</span>
+                    </div>
+
+                    <div class="elec-kpi-item" title="Measured operating current. For full I-V curve sweeps, Imp is the current at the Maximum Power Point.">
+                      <span class="elec-kpi-label" id="elec-kpi-current-title">Operating Current (I)</span>
+                      <span class="elec-kpi-val" id="elec-kpi-current">-- A</span>
+                      <span class="elec-kpi-sub" id="elec-kpi-expected-imp">Expected Imp: -- A</span>
+                    </div>
+
+                    <div class="elec-kpi-item" title="Yield Performance Ratio. When irradiance is measured, evaluates weather-corrected PR per IEC 61724. When irradiance is unmeasured, displays raw percentage of STC nameplate capacity.">
+                      <span class="elec-kpi-label" id="elec-kpi-pr-title">Yield Performance Ratio</span>
+                      <span class="elec-kpi-val" id="elec-kpi-pr">-- %</span>
+                      <span class="elec-kpi-sub" id="elec-kpi-irradiance">Irradiance: -- W/m²</span>
+                    </div>
+
+                    <div class="elec-kpi-item" id="elec-kpi-measured-p-box" style="display: none;" title="Direct measurement from external multimeter or inverter. Discrepancy shows variance relative to calculated P = V × I.">
+                      <span class="elec-kpi-label">Meter Measured Power</span>
+                      <span class="elec-kpi-val" id="elec-kpi-meas-power">-- W</span>
+                      <span class="elec-kpi-sub" id="elec-kpi-power-disc">Discrepancy: -- %</span>
+                    </div>
+
+                    <div class="elec-kpi-item" id="elec-kpi-ff-box" title="Fill Factor: FF = Pmax / (Voc × Isc). Evaluates I-V curve squareness. Displayed as Unavailable when curve endpoints are not captured.">
+                      <span class="elec-kpi-label">Fill Factor (FF)</span>
+                      <span class="elec-kpi-val" id="elec-kpi-ff">--</span>
+                      <span class="elec-kpi-sub" id="elec-kpi-voc-isc">Voc: -- V | Isc: -- A</span>
+                    </div>
+
+                    <div class="elec-kpi-item" id="elec-kpi-rs-box" title="Series resistance (Rs) from reciprocal slope near Voc (V ≥ 0.75 Voc) and shunt resistance (Rsh) from slope near Isc (V ≤ 0.25 Voc). Displayed as Unavailable if endpoints are missing.">
+                      <span class="elec-kpi-label">Est. Resistances</span>
+                      <span class="elec-kpi-val" id="elec-kpi-rs" style="font-size: 14px;">Rs: -- Ω</span>
+                      <span class="elec-kpi-sub" id="elec-kpi-rsh">Rsh: -- Ω</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 2. Multi-view Visualizations Card (I-V Curve, P-V Curve, Operating Bar) -->
+                <div class="elec-chart-card">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+                    <div>
+                      <h4 style="font-family: var(--font-heading); font-size: 18px; font-weight: 600; color: #fff; margin: 0 0 4px 0;">
+                        <i class="fa-solid fa-chart-area" style="color: #34d399; margin-right: 6px;"></i> Characteristic Curve Visualization
+                      </h4>
+                      <span style="font-size: 14px; color: var(--text-secondary);" id="elec-chart-subtext">
+                        Dynamic I–V & P–V sweeps with Maximum Power Point (MPP) tracking
+                      </span>
+                    </div>
+
+                    <div class="elec-view-tabs">
+                      <button type="button" class="elec-view-tab active" id="elec-tab-iv" onclick="switchElectricalChart('iv')">
+                        <i class="fa-solid fa-wave-square"></i> I–V Curve
+                      </button>
+                      <button type="button" class="elec-view-tab" id="elec-tab-pv" onclick="switchElectricalChart('pv')">
+                        <i class="fa-solid fa-chart-line"></i> P–V Curve
+                      </button>
+                      <button type="button" class="elec-view-tab" id="elec-tab-bar" onclick="switchElectricalChart('bar')">
+                        <i class="fa-solid fa-chart-column"></i> STC Comparison
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- SVG Chart Canvas Container -->
+                  <div id="elec-chart-viewport" style="position: relative; width: 100%; min-height: 320px; background: rgba(0,0,0,0.4); border-radius: var(--radius-md); border: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                    <!-- Rendered dynamically by renderElectricalCharts() -->
+                    <svg id="elec-svg-chart" class="elec-chart-svg" viewBox="0 0 760 320"></svg>
+                  </div>
+
+                  <!-- Curve Legend and Diagnostics Footnote -->
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; font-size: 13px; color: var(--text-secondary); flex-wrap: wrap; gap: 8px;">
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                      <span style="display: flex; align-items: center; gap: 6px;">
+                        <span style="display: inline-block; width: 12px; height: 3px; background: #34d399; border-radius: 2px;"></span> Measured Curve
+                      </span>
+                      <span style="display: flex; align-items: center; gap: 6px;">
+                        <span style="display: inline-block; width: 12px; height: 2px; border-top: 2px dashed #94a3b8;"></span> Nominal STC Baseline
+                      </span>
+                      <span style="display: flex; align-items: center; gap: 6px;">
+                        <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #fbbf24;"></span> MPP Target Point
+                      </span>
+                    </div>
+                    <span id="elec-points-count-badge" style="font-family: monospace; color: var(--text-dim);">
+                      -- points analyzed
+                    </span>
+                  </div>
+                </div>
+
+                <!-- 3. Engineering Evidence & Actionable Recommendations Card -->
+                <div class="card">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <h4 style="font-family: var(--font-heading); font-size: 18px; font-weight: 600; color: #fff;">
+                      <i class="fa-solid fa-clipboard-check" style="color: #34d399; margin-right: 6px;"></i> Engineering Findings & Recommended Action
+                    </h4>
+                    <span class="badge" style="background: rgba(255,255,255,0.06); color: var(--text-muted); font-size: 13px; padding: 3px 8px;">
+                      DETERMINISTIC RULE ENGINE
+                    </span>
+                  </div>
+
+                  <!-- Evidence Bullet Points -->
+                  <div style="margin-bottom: 16px;">
+                    <label class="form-label" style="font-size: 14px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px;">
+                      Supporting Evidence & Threshold Triggers:
+                    </label>
+                    <ul id="elec-evidence-list" style="margin: 0; padding-left: 20px; font-size: 14px; color: var(--text-secondary); line-height: 1.6;">
+                      <!-- Populated via JavaScript -->
+                    </ul>
+                  </div>
+
+                  <!-- Data Quality Warnings (if any) -->
+                  <div id="elec-quality-warnings-box" style="display: none; margin-bottom: 16px; padding: 10px 14px; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25); border-radius: var(--radius-md);">
+                    <div style="font-size: 13px; font-weight: 600; color: #f87171; margin-bottom: 4px;">
+                      <i class="fa-solid fa-triangle-exclamation"></i> Data Quality & Measurement Limitations:
+                    </div>
+                    <ul id="elec-quality-warnings-list" style="margin: 0; padding-left: 18px; font-size: 13px; color: #fca5a5; line-height: 1.5;">
+                    </ul>
+                  </div>
+
+                  <!-- Recommended Next Inspection Step -->
+                  <div style="background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.25); border-radius: var(--radius-md); padding: 12px 16px; margin-bottom: 16px;">
+                    <div style="font-size: 13px; font-weight: 600; color: #34d399; margin-bottom: 4px;">
+                      <i class="fa-solid fa-wrench"></i> Recommended Remediation & Next Test:
+                    </div>
+                    <p id="elec-recommended-action-text" style="margin: 0; font-size: 14px; color: #fff; line-height: 1.5;">
+                      --
+                    </p>
+                  </div>
+
+                  <!-- Dispatch Work Order & Disclaimer Footer -->
+                  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding-top: 12px; border-top: 1px solid var(--border-subtle);">
+                    <div style="font-size: 13px; color: var(--text-secondary); max-width: 580px; line-height: 1.4;">
+                      <em>Note: Electrical analysis identifies candidate electrical abnormalities. Definitive cell-level root cause confirmation should be cross-referenced with IRT thermography and visual inspection.</em>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-sm" id="btn-elec-dispatch-wo" onclick="openElectricalWorkOrderModal()">
+                      <i class="fa-solid fa-calendar-plus"></i> Dispatch Work Order
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- BOTTOM SECTION: Persistent Electrical Inspection History -->
+          <div class="card" style="margin-top: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+              <div>
+                <h4 style="font-family: var(--font-heading); font-size: 18px; font-weight: 600; color: #fff; margin: 0 0 4px 0;">
+                  <i class="fa-solid fa-clock-rotate-left" style="color: #34d399; margin-right: 6px;"></i> Electrical Inspection History & Audit Trail
+                </h4>
+                <p style="font-size: 14px; color: var(--text-muted); margin: 0; line-height: 1.4;">
+                  Persistent SQLite audit records of electrical diagnoses, multi-point sweeps, and STC deratings
+                </p>
+              </div>
+
+              <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <a href="/api/electrical/export/csv" class="btn btn-outline btn-sm" style="color: #34d399; border-color: rgba(16,185,129,0.4);" download="solarshield_electrical_audit.csv">
+                  <i class="fa-solid fa-file-csv"></i> Export Audit CSV
+                </a>
+                <button class="btn btn-outline btn-sm" onclick="loadElectricalHistory()">
+                  <i class="fa-solid fa-rotate"></i> Refresh History
+                </button>
+                <button class="btn btn-outline btn-sm" onclick="clearElectricalHistory()" style="color: var(--rose); border-color: rgba(244,63,94,0.3);">
+                  <i class="fa-solid fa-trash"></i> Clear History
+                </button>
+              </div>
+            </div>
+
+            <div style="overflow-x: auto;">
+              <table class="custom-table" style="width: 100%;">
+                <thead>
+                  <tr>
+                    <th># ID</th>
+                    <th>Timestamp</th>
+                    <th>Target Panel</th>
+                    <th>Source</th>
+                    <th>Voltage (V)</th>
+                    <th>Current (A)</th>
+                    <th>Calc Power (W)</th>
+                    <th>Irradiance (W/m²)</th>
+                    <th>Diagnostic Status</th>
+                    <th>Severity</th>
+                    <th>Anomaly Index</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="elec-history-table-body">
+                  <!-- Dynamically populated via loadElectricalHistory() -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ==================================================================
+             TAB 4: SOLAR PANEL FLEET (Section 18: Distinguish Demo Data)
+             ================================================================== -->
+        <section id="tab-panels" class="tab-panel">
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div>
+              <h3 style="font-family: var(--font-heading); font-size: 22px; font-weight: 600;">Solar Photovoltaic Fleet Directory</h3>
+              <p style="font-size: 15px; color: var(--text-muted); line-height: 1.5;">Hardware asset registry, operational derating, and maintenance logs</p>
+            </div>
+
+            <div style="display: flex; gap: 12px;">
+              <input type="text" class="form-input" id="search-panels-input" placeholder="Search panel ID or location..." style="width: 250px;">
+              <button class="btn btn-primary" id="open-add-panel-modal" onclick="promptAddPanel()">
+                <i class="fa-solid fa-plus"></i> Register Panel
+              </button>
+            </div>
+          </div>
+
+          <div class="card table-card">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Panel ID</th>
+                  <th>Tag</th>
+                  <th>Module Name</th>
+                  <th>Location Array</th>
+                  <th>Type & Rating</th>
+                  <th>Operational Status</th>
+                  <th>Current Fault</th>
+                  <th>Last Inspection</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="panels-table-body">
+                <!-- Populated via JavaScript -->
+              </tbody>
+            </table>
+          </div>
+
+        </section>
+
+        <!-- ==================================================================
+             TAB 5: MAINTENANCE WORK ORDERS & AUTOMATIC REMINDERS
+             ================================================================== -->
+        <section id="tab-maintenance" class="tab-panel">
+          
+          <!-- Page Header -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 14px;">
+            <div>
+              <h3 style="font-family: var(--font-heading); font-size: 22px; font-weight: 600; color: #fff; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-wrench" style="color: var(--primary);"></i> Field Maintenance & Work Orders
+              </h3>
+              <p style="font-size: 15px; color: var(--text-muted); line-height: 1.5; margin-top: 4px;">
+                Automated due-date reminder engine, ticket lifecycle management, and technician dispatch
+              </p>
+            </div>
+
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+              <button class="btn btn-outline" onclick="refreshMaintenanceAndReminders()" id="btn-maint-refresh">
+                <i class="fa-solid fa-arrows-rotate"></i> Refresh Reminders & Orders
+              </button>
+              <button class="btn btn-primary" onclick="openWorkOrderModal()">
+                <i class="fa-solid fa-plus"></i> Dispatch Technician
+              </button>
+            </div>
+          </div>
+
+          <!-- Section 1: Maintenance Reminder Summary Cards (KPIs) -->
+          <div class="kpi-grid" style="margin-bottom: 24px;">
+            
+            <!-- 1. Upcoming Maintenance -->
+            <div class="card card-kpi" id="kpi-card-upcoming" style="--kpi-color: #38bdf8; cursor: pointer; transition: all 0.2s ease;" onclick="filterMaintenanceByCard('UPCOMING')" title="Click to filter work orders approaching their scheduled due date">
+              <div class="kpi-header">
+                <span class="kpi-title">Upcoming Maintenance</span>
+                <div class="kpi-icon-wrap" style="background: rgba(56,189,248,0.12); color: #38bdf8;"><i class="fa-solid fa-calendar-days"></i></div>
+              </div>
+              <div class="kpi-value" id="maint-kpi-upcoming" style="color: #38bdf8;">--</div>
+              <div class="kpi-sub">
+                <span style="color: #38bdf8; font-weight: 700;">Approaching Due Date</span>
+                <span>• Scheduled soon</span>
+              </div>
+              <div style="font-size: 13px; color: var(--text-dim); margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+                <span>Within reminder window</span>
+                <span style="font-size: 11px; color: #38bdf8;"><i class="fa-solid fa-filter"></i> Click to filter</span>
+              </div>
+            </div>
+
+            <!-- 2. Due Today -->
+            <div class="card card-kpi" id="kpi-card-due-today" style="--kpi-color: var(--amber); cursor: pointer; transition: all 0.2s ease;" onclick="filterMaintenanceByCard('DUE_TODAY')" title="Click to filter work orders scheduled for today that are not completed">
+              <div class="kpi-header">
+                <span class="kpi-title">Due Today</span>
+                <div class="kpi-icon-wrap" style="background: rgba(245,158,11,0.12); color: var(--amber);"><i class="fa-solid fa-clock"></i></div>
+              </div>
+              <div class="kpi-value" id="maint-kpi-due-today" style="color: var(--amber);">--</div>
+              <div class="kpi-sub">
+                <span style="color: var(--amber); font-weight: 700;">Scheduled for Today</span>
+                <span>• Active & incomplete</span>
+              </div>
+              <div style="font-size: 13px; color: var(--text-dim); margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+                <span>Immediate field priority</span>
+                <span style="font-size: 11px; color: var(--amber);"><i class="fa-solid fa-filter"></i> Click to filter</span>
+              </div>
+            </div>
+
+            <!-- 3. Overdue Maintenance -->
+            <div class="card card-kpi" id="kpi-card-overdue" style="--kpi-color: var(--rose); cursor: pointer; transition: all 0.2s ease;" onclick="filterMaintenanceByCard('OVERDUE')" title="Click to filter incomplete work orders past their scheduled due date">
+              <div class="kpi-header">
+                <span class="kpi-title">Overdue Maintenance</span>
+                <div class="kpi-icon-wrap" style="background: rgba(239,68,68,0.12); color: var(--rose);"><i class="fa-solid fa-triangle-exclamation"></i></div>
+              </div>
+              <div class="kpi-value" id="maint-kpi-overdue" style="color: var(--rose);">--</div>
+              <div class="kpi-sub">
+                <span style="color: var(--rose); font-weight: 700;">Past Due Date</span>
+                <span>• Pending resolution</span>
+              </div>
+              <div style="font-size: 13px; color: var(--text-dim); margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+                <span>Excludes completed/cancelled</span>
+                <span style="font-size: 11px; color: var(--rose);"><i class="fa-solid fa-filter"></i> Click to filter</span>
+              </div>
+            </div>
+
+            <!-- 4. Completed Maintenance -->
+            <div class="card card-kpi" id="kpi-card-completed" style="--kpi-color: var(--emerald); cursor: pointer; transition: all 0.2s ease;" onclick="filterMaintenanceByCard('COMPLETED')" title="Click to filter completed work orders">
+              <div class="kpi-header">
+                <span class="kpi-title">Completed Maintenance</span>
+                <div class="kpi-icon-wrap" style="background: rgba(16,185,129,0.12); color: var(--emerald);"><i class="fa-solid fa-circle-check"></i></div>
+              </div>
+              <div class="kpi-value" id="maint-kpi-completed" style="color: var(--emerald);">--</div>
+              <div class="kpi-sub">
+                <span style="color: var(--emerald); font-weight: 700;">Serviced & Closed</span>
+                <span>• Verified remediations</span>
+              </div>
+              <div style="font-size: 13px; color: var(--text-dim); margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+                <span>Archived records</span>
+                <span style="font-size: 11px; color: var(--emerald);"><i class="fa-solid fa-filter"></i> Click to filter</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Section 2: Maintenance Reminders & Notifications -->
+          <div class="card" style="margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 14px;">
+              <div>
+                <h4 style="font-family: var(--font-heading); font-size: 18px; font-weight: 600; color: #fff; display: flex; align-items: center; gap: 8px;">
+                  <i class="fa-solid fa-bell" style="color: var(--amber);"></i> Maintenance Reminders & Notifications
+                  <span id="maint-notif-unread-badge" class="badge" style="background: rgba(245,158,11,0.15); color: var(--amber); border: 1px solid rgba(245,158,11,0.3); font-size: 12px; margin-left: 6px;">
+                    0 Unread
+                  </span>
+                </h4>
+                <p style="font-size: 14px; color: var(--text-muted); margin-top: 3px;">
+                  Automatic alerts triggered by due-date thresholds: Upcoming (1 day prior), Due Today, and Overdue
+                </p>
+              </div>
+
+              <!-- Controls: Filters & Actions -->
+              <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <!-- Read / Unread Filter Pills -->
+                <div style="display: flex; gap: 6px; background: rgba(0,0,0,0.3); padding: 4px; border-radius: 6px; border: 1px solid var(--border-subtle);">
+                  <button class="maint-filter-pill active" id="notif-pill-all-read" onclick="setNotificationReadFilter(false)">All</button>
+                  <button class="maint-filter-pill" id="notif-pill-unread-only" onclick="setNotificationReadFilter(true)">Unread Only</button>
+                </div>
+
+                <!-- Category Filter Pills -->
+                <div style="display: flex; gap: 6px; background: rgba(0,0,0,0.3); padding: 4px; border-radius: 6px; border: 1px solid var(--border-subtle);">
+                  <button class="maint-filter-pill active" id="notif-pill-cat-all" onclick="setNotificationCategoryFilter('ALL')">All Categories</button>
+                  <button class="maint-filter-pill" id="notif-pill-cat-overdue" onclick="setNotificationCategoryFilter('OVERDUE')">Overdue</button>
+                  <button class="maint-filter-pill" id="notif-pill-cat-due_today" onclick="setNotificationCategoryFilter('DUE_TODAY')">Due Today</button>
+                  <button class="maint-filter-pill" id="notif-pill-cat-upcoming" onclick="setNotificationCategoryFilter('UPCOMING')">Upcoming</button>
+                </div>
+
+                <!-- Mark All As Read Button -->
+                <button class="btn btn-outline btn-sm" onclick="markAllNotificationsAsRead()" title="Mark all displayed notifications as read">
+                  <i class="fa-solid fa-envelope-open-text"></i> Mark All as Read
+                </button>
+              </div>
+            </div>
+
+            <!-- Notifications List Container -->
+            <div id="maint-notifications-container" style="display: flex; flex-direction: column; gap: 12px; max-height: 480px; overflow-y: auto; padding-right: 4px;">
+              <!-- Dynamically populated via loadMaintenanceNotifications() -->
+              <div style="text-align: center; padding: 28px; color: var(--text-muted);">
+                <i class="fa-solid fa-spinner fa-spin" style="font-size: 20px; color: var(--primary); margin-bottom: 8px;"></i>
+                <p>Loading maintenance reminders & notifications...</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 3: Work Orders Registry (Table) -->
+          <div class="card table-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+              <div>
+                <h4 style="font-family: var(--font-heading); font-size: 18px; font-weight: 600; color: #fff; display: flex; align-items: center; gap: 8px;">
+                  <i class="fa-solid fa-list-check" style="color: var(--primary);"></i> Work Orders Registry
+                </h4>
+                <div style="font-size: 14px; color: var(--text-muted); margin-top: 2px;" id="maint-table-filter-status">
+                  Showing all active and historical work orders from SQLite database
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <button id="btn-clear-table-filter" class="btn btn-outline btn-sm" style="display: none;" onclick="clearMaintenanceCardFilter()">
+                  <i class="fa-solid fa-filter-circle-xmark"></i> Reset Table Filter
+                </button>
+                <div style="position: relative;">
+                  <input type="text" id="maint-search-input" placeholder="Search panel, tech, type..." oninput="handleMaintenanceSearch()" style="background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); color: #fff; border-radius: 6px; padding: 6px 12px 6px 30px; font-size: 13px; width: 220px;">
+                  <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 10px; top: 10px; font-size: 12px; color: var(--text-muted);"></i>
+                </div>
+              </div>
+            </div>
+
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Target Panel</th>
+                  <th>Linked Report</th>
+                  <th>Assigned Technician</th>
+                  <th>Maintenance Task</th>
+                  <th>Scheduled Due Date</th>
+                  <th>Priority</th>
+                  <th>Due Urgency / Status</th>
+                  <th>Field Notes</th>
+                  <th style="text-align: right;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="maintenance-table-body">
+                <!-- Populated via JavaScript -->
+              </tbody>
+            </table>
+          </div>
+
+        </section>
+
+        <!-- ==================================================================
+             TAB 6: AUDIT REPORTS & CSV EXPORTS (Sections 15 & 16)
+             ================================================================== -->
+        <section id="tab-reports" class="tab-panel">
+          
+          <div class="card" style="margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+              <div>
+                <h3 style="font-family: var(--font-heading); font-size: 22px; font-weight: 600;">Audit & Technical Compliance Documentation</h3>
+                <p style="font-size: 15px; color: var(--text-muted); line-height: 1.5;">Export official engineering reports, flight audit manifests, and spreadsheets</p>
+              </div>
+
+              <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <a href="/api/export/csv" class="btn btn-primary" download>
+                  <i class="fa-solid fa-file-csv"></i> Download CSV Spreadsheet
+                </a>
+                <a href="/api/electrical/export/csv" class="btn btn-outline" style="color: #34d399; border-color: rgba(16,185,129,0.4);" download>
+                  <i class="fa-solid fa-chart-line" style="color: #34d399;"></i> Export Electrical CSV
+                </a>
+                <button class="btn btn-outline" onclick="window.print()">
+                  <i class="fa-solid fa-file-pdf"></i> Print / Save as PDF
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Audit Table (Section 16) -->
+          <div class="card table-card" style="margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+              <h4 style="font-family: var(--font-heading); font-size: 18px; font-weight: 600;">Inspection Audit Records</h4>
+              <span style="font-size: 14px; color: var(--text-muted);">Synchronized with SQLite table: fault_reports</span>
+            </div>
+
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Report ID</th>
+                  <th>Panel ID</th>
+                  <th>Fault Type</th>
+                  <th>Detection Mode</th>
+                  <th>Detection Score</th>
+                  <th>Severity</th>
+                  <th>Estimated Loss</th>
+                  <th>Approx. Region</th>
+                  <th>Inspection Date</th>
+                  <th>Maintenance Status</th>
+                </tr>
+              </thead>
+              <tbody id="audit-table-body">
+                <!-- Populated via JavaScript -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card">
+            <h4 style="font-family: var(--font-heading); font-size: 18px; font-weight: 600; margin-bottom: 14px;">
+              Official Audit Manifest Preview
+            </h4>
+            <div id="reports-preview-box" style="font-family: monospace; font-size: 13px; line-height: 1.6; background: rgba(0,0,0,0.5); padding: 20px; border-radius: var(--radius-md); max-height: 400px; overflow-y: auto; color: #cbd5e1;">
+              <!-- Formatted report preview rendered here -->
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ==================================================================
+             TAB 7: SYSTEM SETTINGS & TELEMETRY (Section 12)
+             ================================================================== -->
+        <section id="tab-settings" class="tab-panel">
+          
+          <div class="card" style="margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 6px; flex-wrap: wrap;">
+                  <h3 style="font-family: var(--font-heading); font-size: 22px; font-weight: 600; color: #fff; margin: 0;">System Health & Settings</h3>
+                  <span id="health-summary-badge" class="badge badge-checking" style="font-size: 13px; padding: 4px 10px; font-weight: 700; letter-spacing: 0.5px;">
+                    ● INITIALIZING HEALTH PROBE...
+                  </span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px; font-size: 15px; color: var(--text-muted); flex-wrap: wrap; line-height: 1.5;">
+                  <span>Monitor application health, image-processing services, database connectivity, and diagnostic status.</span>
+                  <span>•</span>
+                  <span id="health-last-checked" style="color: var(--primary); font-weight: 600;">Last health check: Awaiting live scan...</span>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <button class="btn btn-outline" id="btn-refresh-health" onclick="refreshSystemHealth()">
+                  <i class="fa-solid fa-arrows-rotate"></i> <span>Refresh Health Checks</span>
+                </button>
+                <button class="btn btn-primary" id="btn-full-diagnostics" onclick="runFullDiagnostics()">
+                  <i class="fa-solid fa-stethoscope"></i> <span>Run Full Diagnostics</span>
+                </button>
+                <button class="btn btn-outline" id="btn-diagnostic-log" onclick="openDiagnosticLogModal()">
+                  <i class="fa-solid fa-list-check"></i> <span>View Diagnostic Log</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Health Error Banner (Section 12: Hidden unless health check fails) -->
+            <div id="settings-error-banner" style="display: none; margin-top: 16px; padding: 12px 16px; background: rgba(255,69,58,0.12); border: 1px solid rgba(255,69,58,0.35); border-radius: var(--radius-md); color: #ff453a; font-size: 13px; align-items: center; gap: 10px;">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              <div>
+                <strong>SYSTEM HEALTH CHECK FAILED: </strong>
+                <span id="settings-error-msg">Backend unavailable or network connection failed.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-grid">
+            <div class="status-card clickable-card" id="card-db" onclick="showCardDiagnostic('database')">
+              <div class="status-card-info">
+                <h4><i class="fa-solid fa-database" style="color: var(--primary); margin-right: 8px;"></i>Database</h4>
+                <p id="status-db-desc">Awaiting SQLite runtime probe...</p>
+                <div class="card-interaction-hint"><i class="fa-solid fa-circle-info"></i> Click for diagnostic details</div>
+              </div>
+              <span class="badge badge-checking" id="status-db">CHECKING...</span>
+            </div>
+
+            <div class="status-card clickable-card" id="card-vision" onclick="showCardDiagnostic('vision')">
+              <div class="status-card-info">
+                <h4><i class="fa-solid fa-eye" style="color: var(--primary); margin-right: 8px;"></i>Image Processing</h4>
+                <p id="status-opencv-desc">Awaiting image processing probe...</p>
+                <div class="card-interaction-hint"><i class="fa-solid fa-circle-info"></i> Click for diagnostic details</div>
+              </div>
+              <span class="badge badge-checking" id="status-opencv">CHECKING...</span>
+            </div>
+
+            <div class="status-card clickable-card" id="card-ai" onclick="showCardDiagnostic('detection')">
+              <div class="status-card-info">
+                <h4><i class="fa-solid fa-crosshairs" style="color: var(--primary); margin-right: 8px;"></i>Detection Service</h4>
+                <p id="status-ai-desc">Awaiting detection service probe...</p>
+                <div class="card-interaction-hint"><i class="fa-solid fa-circle-info"></i> Click for diagnostic details</div>
+              </div>
+              <span class="badge badge-checking" id="status-ai">CHECKING...</span>
+            </div>
+
+            <div class="status-card clickable-card" id="card-mode" onclick="showCardDiagnostic('mode')">
+              <div class="status-card-info">
+                <h4><i class="fa-solid fa-sliders" style="color: var(--warning); margin-right: 8px;"></i>Detection Mode</h4>
+                <p id="status-mode-desc">Demo / OpenCV Heuristic (Heuristic feature extraction prototype)</p>
+                <div class="card-interaction-hint"><i class="fa-solid fa-circle-info"></i> Click for diagnostic details</div>
+              </div>
+              <span class="badge badge-warning" id="status-mode">Demo / OpenCV Heuristic</span>
+            </div>
+
+            <div class="status-card clickable-card" id="card-camera" onclick="showCardDiagnostic('ingestion')">
+              <div class="status-card-info">
+                <h4><i class="fa-solid fa-camera" style="color: var(--primary); margin-right: 8px;"></i>Input Sources</h4>
+                <p id="status-camera-desc">Local file ingestion operational • Physical camera: Not Configured</p>
+                <div class="card-interaction-hint"><i class="fa-solid fa-circle-info"></i> Click for diagnostic details</div>
+              </div>
+              <span class="badge badge-checking" id="status-camera">CHECKING...</span>
+            </div>
+
+            <div class="status-card clickable-card" id="card-version" onclick="showCardDiagnostic('application')">
+              <div class="status-card-info">
+                <h4><i class="fa-solid fa-code-branch" style="color: var(--primary); margin-right: 8px;"></i>Application Version</h4>
+                <p id="status-version-desc">SolarShield AI Photovoltaic Monitor</p>
+                <div class="card-interaction-hint"><i class="fa-solid fa-circle-info"></i> Click for diagnostic details</div>
+              </div>
+              <span class="badge" style="background: rgba(0,240,255,0.15); color: var(--primary);" id="status-version">v2.5</span>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top: 24px;">
+            <h4 style="font-family: var(--font-heading); font-size: 18px; font-weight: 600; margin-bottom: 12px;">
+              Model Diagnostic Specifications
+            </h4>
+            <div class="model-info-grid">
+              <div class="model-info-item">
+                <span class="model-info-label">Active Detection Engine</span>
+                <span class="model-info-val" id="spec-model-name">SolarShield Vision Diagnostic Engine</span>
+              </div>
+              <div class="model-info-item">
+                <span class="model-info-label">Engine Type</span>
+                <span class="model-info-val" id="spec-engine-type">Computer Vision / Feature Extraction</span>
+              </div>
+              <div class="model-info-item">
+                <span class="model-info-label">Detection Mode</span>
+                <span class="model-info-val" id="spec-detection-mode">Demo / OpenCV Heuristic</span>
+              </div>
+              <div class="model-info-item">
+                <span class="model-info-label">Localization Type</span>
+                <span class="model-info-val" id="spec-localization-type">Approximate Bounding & Reticle Coordinates</span>
+              </div>
+              <div class="model-info-item">
+                <span class="model-info-label">Score Metric</span>
+                <span class="model-info-val" id="spec-score-metric">Detection Score (Feature Extraction Prototype)</span>
+              </div>
+              <div class="model-info-item">
+                <span class="model-info-label">Build Tag</span>
+                <span class="model-info-val" id="spec-build-tag">v2.5-cv (OpenCV / PIL Pipeline)</span>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- ======================================================================
+       MODAL 1: WORK ORDER DISPATCH MODAL (Section 13: Inherited Fields)
+       ====================================================================== -->
+  <div class="modal-backdrop" id="workorder-modal">
+    <div class="modal-box" style="max-width: 600px;">
+      <div class="modal-header">
+        <h3 style="display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-wrench" style="color: var(--amber);"></i> Dispatch Maintenance Work Order
+        </h3>
+        <button class="modal-close" onclick="closeWorkOrderModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-content">
+        <form id="workorder-form" onsubmit="event.preventDefault(); submitWorkOrder();">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+            <div class="form-group">
+              <label class="form-label">Target Panel ID</label>
+              <input type="text" class="form-input" id="wo-panel-id" readonly style="background: rgba(0,0,0,0.4); color: var(--primary); font-weight: 700;">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Linked Fault Report ID</label>
+              <input type="text" class="form-input" id="wo-report-id" readonly style="background: rgba(0,0,0,0.4); font-family: monospace;">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+            <div class="form-group">
+              <label class="form-label">Detected Fault Type</label>
+              <input type="text" class="form-input" id="wo-fault-type" readonly style="background: rgba(0,0,0,0.4); font-weight: 600;">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Severity & Priority</label>
+              <input type="text" class="form-input" id="wo-severity" readonly style="background: rgba(0,0,0,0.4); font-weight: 700; color: var(--amber);">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label class="form-label" for="wo-tech">Assigned Field Technician</label>
+            <input type="text" class="form-input" id="wo-tech" value="Solar Specialist Lead Engineer" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label class="form-label" for="wo-type">Maintenance Remediation Type</label>
+            <input type="text" class="form-input" id="wo-type" value="Thermal Hotspot & Diode Remediation" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label class="form-label" for="wo-date">Scheduled Dispatch Date</label>
+            <input type="date" class="form-input" id="wo-date" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 18px;">
+            <label class="form-label" for="wo-notes">Engineering Instructions & Advisory Notes</label>
+            <textarea class="form-input" id="wo-notes" rows="3" style="resize: vertical; font-size: 13px;"></textarea>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 12px;">
+            <button type="button" class="btn btn-outline" onclick="closeWorkOrderModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="wo-submit-btn">
+              <i class="fa-solid fa-paper-plane"></i> Confirm & Dispatch Order
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       MODAL 1B: WORK ORDER DETAILS & STATUS MANAGEMENT MODAL
+       ====================================================================== -->
+  <div class="modal-backdrop" id="workorder-detail-modal">
+    <div class="modal-box" style="max-width: 650px;">
+      <div class="modal-header">
+        <h3 style="display: flex; align-items: center; gap: 8px;" id="wo-detail-modal-title">
+          <i class="fa-solid fa-wrench" style="color: var(--primary);"></i> Work Order Details: WO-000
+        </h3>
+        <button class="modal-close" onclick="closeWorkOrderDetailModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-content">
+        <form id="workorder-detail-form" onsubmit="event.preventDefault(); submitWorkOrderDetailUpdate();">
+          <input type="hidden" id="edit-wo-id">
+
+          <!-- Static Metadata Ribbon -->
+          <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 12px 16px; margin-bottom: 16px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+            <div>
+              <div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">Target Panel</div>
+              <div id="wo-detail-panel-id" style="font-weight: 700; color: #fff; font-size: 15px; margin-top: 2px;">--</div>
+            </div>
+            <div>
+              <div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">Linked Report</div>
+              <div id="wo-detail-report-id" style="font-family: monospace; font-size: 14px; color: var(--primary); margin-top: 2px;">--</div>
+            </div>
+            <div>
+              <div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">Current Urgency</div>
+              <div id="wo-detail-computed-badge" style="margin-top: 2px;">--</div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+            <div class="form-group">
+              <label class="form-label" for="edit-wo-tech">Assigned Field Technician</label>
+              <input type="text" class="form-input" id="edit-wo-tech" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="edit-wo-date">Scheduled Due Date</label>
+              <input type="date" class="form-input" id="edit-wo-date" required>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+            <div class="form-group">
+              <label class="form-label" for="edit-wo-priority">Priority Level</label>
+              <select class="form-select" id="edit-wo-priority">
+                <option value="CRITICAL">CRITICAL (Immediate Isolation)</option>
+                <option value="HIGH">HIGH (Within 48h)</option>
+                <option value="MEDIUM">MEDIUM (Scheduled Inspection)</option>
+                <option value="LOW">LOW (Routine Maintenance)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="edit-wo-status">Work Order Status</label>
+              <select class="form-select" id="edit-wo-status">
+                <option value="SCHEDULED">SCHEDULED (Awaiting Dispatch)</option>
+                <option value="IN_PROGRESS">IN_PROGRESS (Technician On-Site)</option>
+                <option value="COMPLETED">COMPLETED (Serviced & Verified)</option>
+                <option value="CANCELLED">CANCELLED (Withdrawn / Void)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label class="form-label" for="edit-wo-type">Maintenance Task Description</label>
+            <input type="text" class="form-input" id="edit-wo-type" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label class="form-label" for="edit-wo-notes">Engineering Notes & Remediation Log</label>
+            <textarea class="form-input" id="edit-wo-notes" rows="3" style="resize: vertical; font-size: 13px;"></textarea>
+          </div>
+
+          <!-- Quick Action Buttons -->
+          <div style="background: rgba(0,0,0,0.25); border-radius: var(--radius-md); padding: 10px 14px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+            <div style="font-size: 13px; color: var(--text-muted);">Quick Status Transitions:</div>
+            <div style="display: flex; gap: 8px;">
+              <button type="button" class="btn btn-outline btn-sm" onclick="setQuickStatus('IN_PROGRESS')" style="color: #38bdf8; border-color: rgba(56,189,248,0.3);">
+                <i class="fa-solid fa-play"></i> In Progress
+              </button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="setQuickStatus('COMPLETED')" style="color: #34d399; border-color: rgba(52,199,89,0.3);">
+                <i class="fa-solid fa-check-double"></i> Mark Completed
+              </button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="setQuickStatus('CANCELLED')" style="color: #f87171; border-color: rgba(239,68,68,0.3);">
+                <i class="fa-solid fa-ban"></i> Cancel Order
+              </button>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 12px;">
+            <button type="button" class="btn btn-outline" onclick="closeWorkOrderDetailModal()">Close</button>
+            <button type="submit" class="btn btn-primary" id="btn-save-wo-detail">
+              <i class="fa-solid fa-floppy-disk"></i> Save Work Order Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       MODAL 2: FULL-SCREEN ZOOM INSPECTION
+       ====================================================================== -->
+  <div class="modal-backdrop" id="zoom-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modal-zoom-title">Diagnostic Inspection Reticle</h3>
+        <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-content" style="text-align: center;">
+        <img id="modal-zoom-img" src="" alt="Zoom Image" style="max-width: 100%; max-height: 60vh; border-radius: var(--radius-md); box-shadow: 0 10px 30px rgba(0,0,0,0.8);">
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       MODAL 3: COMPONENT DIAGNOSTIC DETAILS MODAL
+       ====================================================================== -->
+  <div class="modal-backdrop" id="diagnostic-card-modal">
+    <div class="modal-box" style="max-width: 680px;">
+      <div class="modal-header">
+        <h3 id="diag-modal-title" style="display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-microchip" style="color: var(--primary);"></i> Component Diagnostic
+        </h3>
+        <button class="modal-close" onclick="closeDiagnosticCardModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-content" id="diag-modal-body">
+        <!-- Rendered dynamically by showCardDiagnostic(type) -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       MODAL 4: FULL SYSTEM DIAGNOSTICS REPORT MODAL
+       ====================================================================== -->
+  <div class="modal-backdrop" id="full-diagnostics-modal">
+    <div class="modal-box" style="max-width: 900px;">
+      <div class="modal-header">
+        <h3 style="display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-stethoscope" style="color: var(--primary);"></i> SolarShield Full System Diagnostics Report
+        </h3>
+        <button class="modal-close" onclick="closeFullDiagnosticsModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-content">
+        <!-- Diagnostic Summary Header & Metrics -->
+        <div id="full-diag-summary" style="margin-bottom: 20px; padding: 16px 20px; border-radius: var(--radius-md); background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+          <div>
+            <div style="font-size: 13px; color: var(--text-secondary); font-weight: 600;">Overall Telemetry Status</div>
+            <div id="full-diag-status-text" style="font-size: 18px; font-weight: 700; color: #fff; margin-top: 2px;">RUNNING PROBE...</div>
+          </div>
+          <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <div style="text-align: center; padding: 4px 12px; background: rgba(52,199,89,0.1); border-radius: 6px; border: 1px solid rgba(52,199,89,0.3);">
+              <div style="font-size: 13px; color: #34c759; font-weight: 700;">PASSED</div>
+              <div id="full-diag-count-passed" style="font-size: 16px; font-weight: 800; color: #34c759;">--</div>
+            </div>
+            <div style="text-align: center; padding: 4px 12px; background: rgba(245,158,11,0.1); border-radius: 6px; border: 1px solid rgba(245,158,11,0.3);">
+              <div style="font-size: 13px; color: #fbbf24; font-weight: 700;">WARNINGS</div>
+              <div id="full-diag-count-warn" style="font-size: 16px; font-weight: 800; color: #fbbf24;">--</div>
+            </div>
+            <div style="text-align: center; padding: 4px 12px; background: rgba(255,69,58,0.1); border-radius: 6px; border: 1px solid rgba(255,69,58,0.3);">
+              <div style="font-size: 13px; color: #ff453a; font-weight: 700;">FAILED</div>
+              <div id="full-diag-count-failed" style="font-size: 16px; font-weight: 800; color: #ff453a;">--</div>
+            </div>
+            <div style="text-align: center; padding: 4px 12px; background: rgba(0,240,255,0.08); border-radius: 6px; border: 1px solid rgba(0,240,255,0.25);">
+              <div style="font-size: 13px; color: var(--primary); font-weight: 700;">DURATION</div>
+              <div id="full-diag-duration" style="font-size: 16px; font-weight: 800; color: var(--primary); font-family: monospace;">--</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="overflow-x: auto; max-height: 440px; overflow-y: auto;">
+          <table class="data-table" id="full-diag-table" style="width: 100%;">
+            <thead>
+              <tr>
+                <th>Component</th>
+                <th>Check Performed</th>
+                <th>Status</th>
+                <th>Duration</th>
+                <th>Diagnostic Details</th>
+              </tr>
+            </thead>
+            <tbody id="full-diag-tbody">
+              <!-- Dynamically populated from /api/system/diagnostics -->
+            </tbody>
+          </table>
+        </div>
+
+        <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <span id="full-diag-timestamp" style="font-size: 13px; color: var(--text-muted);">Timestamp: --</span>
+          <div style="display: flex; gap: 12px;">
+            <button class="btn btn-outline" id="btn-rerun-diagnostics" onclick="runFullDiagnostics()">
+              <i class="fa-solid fa-arrows-rotate"></i> Re-Run Diagnostics
+            </button>
+            <button class="btn btn-primary" onclick="closeFullDiagnosticsModal()">
+              Done
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       MODAL 5: PERSISTENT DIAGNOSTIC TELEMETRY LOG MODAL
+       ====================================================================== -->
+  <div class="modal-backdrop" id="diagnostic-log-modal">
+    <div class="modal-box" style="max-width: 950px;">
+      <div class="modal-header">
+        <h3 style="display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-list-check" style="color: var(--primary);"></i> System Diagnostic & Telemetry Log History
+        </h3>
+        <button class="modal-close" onclick="closeDiagnosticLogModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-content">
+        <!-- Filter Toolbar -->
+        <div style="margin-bottom: 16px; padding: 12px 16px; background: rgba(255,255,255,0.02); border-radius: var(--radius-md); border: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <div>
+              <label style="font-size: 14px; color: var(--text-secondary); font-weight: 600; margin-right: 6px;">Component:</label>
+              <select id="diag-log-filter-component" onchange="loadDiagnosticLogs()" style="background: rgba(0,0,0,0.5); color: #fff; border: 1px solid var(--border-subtle); padding: 6px 12px; border-radius: 6px; font-size: 14px;">
+                <option value="ALL">All Components</option>
+                <option value="Database Engine">Database Engine</option>
+                <option value="Vision Processing Engine">Vision Processing Engine</option>
+                <option value="AI Detection Service">AI Detection Service</option>
+                <option value="Detection Mode">Detection Mode</option>
+                <option value="Storage & File Ingestion">Storage & File Ingestion</option>
+                <option value="Application Server">Application Server</option>
+                <option value="API Route Health">API Route Health</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size: 14px; color: var(--text-secondary); font-weight: 600; margin-right: 6px;">Status:</label>
+              <select id="diag-log-filter-status" onchange="loadDiagnosticLogs()" style="background: rgba(0,0,0,0.5); color: #fff; border: 1px solid var(--border-subtle); padding: 6px 12px; border-radius: 6px; font-size: 14px;">
+                <option value="ALL">All Statuses</option>
+                <option value="PASSED">PASSED</option>
+                <option value="WARNING">WARNING</option>
+                <option value="FAILED">FAILED</option>
+              </select>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <span id="log-count-indicator" style="color: var(--primary); font-weight: 600; font-size: 14px;">Loading logs...</span>
+            <button class="btn btn-outline" style="padding: 6px 14px; font-size: 14px;" onclick="loadDiagnosticLogs()">
+              <i class="fa-solid fa-arrows-rotate"></i> Refresh
+            </button>
+            <button class="btn btn-outline" style="padding: 6px 14px; font-size: 14px; color: #ff8585; border-color: rgba(255,69,58,0.4);" onclick="clearDiagnosticLogs()">
+              <i class="fa-solid fa-trash-can"></i> Clear History
+            </button>
+          </div>
+        </div>
+
+        <div style="overflow-x: auto; max-height: 440px; overflow-y: auto;">
+          <table class="data-table" style="width: 100%;">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Timestamp</th>
+                <th>Component</th>
+                <th>Check Performed</th>
+                <th>Status</th>
+                <th>Duration</th>
+                <th>Severity</th>
+                <th>Message / Details</th>
+              </tr>
+            </thead>
+            <tbody id="diag-log-tbody">
+              <!-- Dynamically populated from SQLite via /api/system/diagnostics/logs -->
+            </tbody>
+          </table>
+        </div>
+
+        <div style="margin-top: 18px; display: flex; justify-content: flex-end;">
+          <button class="btn btn-primary" onclick="closeDiagnosticLogModal()">
+            Close Log
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Core Web App Logic -->
+  <script src="/app.js"></script>
+  <!-- Modal: Dispatch Field Work Order from Thermal Inspection -->
+  <div class="modal-backdrop" id="thermal-wo-modal" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-wrench" style="color: var(--primary);"></i> Dispatch Thermal Remediation Work Order</h3>
+        <button class="modal-close-btn" onclick="closeThermalWorkOrderModal()">&times;</button>
+      </div>
+      <form onsubmit="event.preventDefault(); submitThermalWorkOrder();">
+        <input type="hidden" id="two-inspection-id">
+        <div class="form-group">
+          <label class="form-label">Target Solar Module</label>
+          <input type="text" class="form-input" id="two-panel-id" readonly style="background: rgba(255,255,255,0.03);">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Assigned Field Technician</label>
+          <input type="text" class="form-input" id="two-technician" value="FLIR Level II Thermographer" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Maintenance Remediation Type</label>
+          <input type="text" class="form-input" id="two-type" value="IRT Hotspot Remediation & Bypass Diode Inspection" required>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label class="form-label">Priority</label>
+            <select class="form-select" id="two-priority">
+              <option value="CRITICAL">CRITICAL (Immediate Isolation)</option>
+              <option value="HIGH" selected>HIGH (Within 48h)</option>
+              <option value="MEDIUM">MEDIUM (Scheduled Inspection)</option>
+              <option value="LOW">LOW (Routine Maintenance)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Scheduled Date</label>
+            <input type="date" class="form-input" id="two-scheduled-date" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Technical Notes & IEC Findings</label>
+          <textarea class="form-input" id="two-notes" rows="3" style="resize: vertical;"></textarea>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;">
+          <button type="button" class="btn btn-outline" onclick="closeThermalWorkOrderModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="two-submit-btn">Create & Dispatch Order</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- Electrical Fault Work Order Dispatch Modal -->
+  <div id="electrical-wo-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-box" style="max-width: 520px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 style="font-family: var(--font-heading); font-size: 17px; font-weight: 800; color: #fff;">
+          <i class="fa-solid fa-wrench" style="color: #34d399; margin-right: 6px;"></i> Dispatch Electrical Remediation Work Order
+        </h3>
+        <button class="modal-close-btn" onclick="closeElectricalWorkOrderModal()">&times;</button>
+      </div>
+      <form onsubmit="event.preventDefault(); submitElectricalWorkOrder();">
+        <input type="hidden" id="elwo-inspection-id">
+        <div class="form-group">
+          <label class="form-label">Target Solar Module</label>
+          <input type="text" class="form-input" id="elwo-panel-id" readonly style="background: rgba(255,255,255,0.03);">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Assigned Field Technician</label>
+          <input type="text" class="form-input" id="elwo-technician" value="Master Electrician / NABCEP Certified Specialist" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Maintenance Remediation Type</label>
+          <input type="text" class="form-input" id="elwo-type" value="Electrical Fault Investigation & Diode / Connector Remediation" required>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label class="form-label">Priority</label>
+            <select class="form-select" id="elwo-priority">
+              <option value="CRITICAL">CRITICAL (Immediate Isolation)</option>
+              <option value="HIGH" selected>HIGH (Within 48h)</option>
+              <option value="MEDIUM">MEDIUM (Scheduled Inspection)</option>
+              <option value="LOW">LOW (Routine Maintenance)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Scheduled Date</label>
+            <input type="date" class="form-input" id="elwo-scheduled-date" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Technical Notes & Electrical Findings</label>
+          <textarea class="form-input" id="elwo-notes" rows="3" style="resize: vertical;"></textarea>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;">
+          <button type="button" class="btn btn-outline" onclick="closeElectricalWorkOrderModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="elwo-submit-btn">Create & Dispatch Order</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</body>
+</html>

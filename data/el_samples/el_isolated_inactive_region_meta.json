@@ -1,0 +1,21 @@
+{
+  "title": "Electrically Disconnected Inactive Region",
+  "defectCategory": "DISCONNECTED_CELL_REGION",
+  "severity": "CRITICAL",
+  "maintenancePriority": "URGENT",
+  "anomalyScore": 92.6,
+  "inactiveAreaPercent": 14.8,
+  "crackPixelCount": 310,
+  "description": "Severed corner wafer piece completely isolated from carrier injection, emitting no electroluminescence (dead cell zone).",
+  "whyFlagged": "Critical inactive cell region (14.8% area loss). High reverse-bias shunting and thermal hotspot risk under solar illumination.",
+  "recommendedAction": "Immediate module isolation and replacement. Conduct dark I-V curve tracing to verify sub-string derating.",
+  "box": {
+    "x": 490,
+    "y": 30,
+    "width": 280,
+    "height": 310
+  },
+  "cellType": "Bifacial Dual-Glass Monocrystalline",
+  "name": "el_isolated_inactive_region",
+  "filename": "el_isolated_inactive_region.png"
+}

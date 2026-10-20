@@ -1,0 +1,15 @@
+# SolarShield Photovoltaic Electrical Measurement Import Template
+# Supported Columns (units indicated in header):
+# - timestamp: ISO-8601 string (e.g. 2026-10-09T12:00:00)
+# - panel_id: Module or String identifier (e.g. SP-001)
+# - voltage_v: Terminal operating voltage in Volts (Required)
+# - current_a: Operating current in Amperes (Required)
+# - measured_power_w: Measured active power from meter/inverter in Watts (Optional)
+# - irradiance_wm2: Solar plane-of-array irradiance in W/m² (Optional but recommended for STC derating)
+# - panel_temp_c: Back-of-module cell temperature in °C (Optional)
+# - ambient_temp_c: Ambient shade temperature in °C (Optional)
+# - source: Instrument name (e.g. MULTIMETER, INVERTER_MPPT, IV_TRACER)
+# - notes: Operating conditions, weather, soiling observations (Optional)
+timestamp,panel_id,voltage_v,current_a,measured_power_w,irradiance_wm2,panel_temp_c,ambient_temp_c,source,notes
+2026-10-09T12:00:00,SP-001,41.5,10.1,419.1,1000.0,25.0,22.0,IV_CURVE_TRACER,Clear sky benchmark
+2026-10-09T12:15:00,SP-002,27.5,9.9,272.2,980.0,28.0,23.0,HANDHELD_MULTIMETER,Partial shading suspected

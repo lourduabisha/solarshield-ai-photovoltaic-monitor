@@ -1,0 +1,7 @@
+timestamp,panel_id,voltage_v,current_a,measured_power_w,irradiance_wm2,panel_temp_c,ambient_temp_c,source,notes
+2026-10-09T10:00:00,SP-001,41.4,10.05,416.1,1000.0,25.0,22.0,INVERTER_MPPT,Morning baseline scan
+2026-10-09T10:15:00,SP-002,27.6,9.95,274.6,980.0,26.5,22.5,INVERTER_MPPT,Zone A East string 2
+2026-10-09T10:30:00,SP-003,41.0,6.5,266.5,990.0,27.0,23.0,INVERTER_MPPT,Zone B Central soiling
+2026-10-09T10:45:00,SP-004,36.2,8.4,304.1,950.0,30.0,23.5,INVERTER_MPPT,High resistance test
+2026-10-09T11:00:00,SP-005,38.5,9.2,354.2,970.0,28.5,24.0,INVERTER_MPPT,Array Beta string 1
+2026-10-09T11:15:00,SP-006,48.9,0.04,2.0,960.0,29.0,24.0,INVERTER_MPPT,Open circuit test

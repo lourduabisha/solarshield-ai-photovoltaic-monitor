@@ -1,0 +1,21 @@
+{
+  "title": "Dendritic Wafer Microcrack",
+  "defectCategory": "MICROCRACK",
+  "severity": "HIGH",
+  "maintenancePriority": "HIGH",
+  "anomalyScore": 68.4,
+  "inactiveAreaPercent": 1.2,
+  "crackPixelCount": 420,
+  "description": "Wafer microcrack propagating diagonally across central busbar, creating localized recombination centers.",
+  "whyFlagged": "Sub-millimeter crystal microcrack localized via morphological top-hat filtering; risk of mechanical fracture propagation.",
+  "recommendedAction": "Perform high-resolution electroluminescence survey under mechanical load; monitor during next field audit.",
+  "box": {
+    "x": 110,
+    "y": 275,
+    "width": 510,
+    "height": 305
+  },
+  "cellType": "Mono-Si PERC M10",
+  "name": "el_microcrack_dendritic",
+  "filename": "el_microcrack_dendritic.png"
+}

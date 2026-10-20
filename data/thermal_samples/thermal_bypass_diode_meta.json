@@ -1,0 +1,24 @@
+{
+  "name": "thermal_bypass_diode",
+  "filename": "thermal_bypass_diode.png",
+  "matrixFile": "thermal_bypass_diode_matrix.npy",
+  "tMin": 29.6,
+  "tMax": 75.0,
+  "tAvg": 47.3,
+  "tNominal": 41.0,
+  "deltaT": 34.0,
+  "emissivity": 0.95,
+  "ambientTemp": 25.0,
+  "calibrationSpanMin": 25.0,
+  "calibrationSpanMax": 75.0,
+  "anomalyType": "BYPASS_DIODE",
+  "box": {
+    "x": -360,
+    "y": 230,
+    "width": 760,
+    "height": 140
+  },
+  "description": "Bypass diode conduction anomaly causing severe sub-string heating across cell group.",
+  "iecClass": "Class 3 (Critical)",
+  "severity": "CRITICAL"
+}

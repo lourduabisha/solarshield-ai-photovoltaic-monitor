@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: solarshield-ai
+    runtime: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python web/server.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ENVIRONMENT
+        value: production
+    healthCheckPath: /api/health
+    autoDeploy: true
+
+# ==============================================================================
+# Persistent Disk Configuration (Render Starter Plan & Above)
+# ==============================================================================
+# If upgrading to Render's paid tier for persistent database and upload storage,
+# uncomment the configuration below and set the environment variables:
+#
+#   envVars:
+#     - key: DATABASE_PATH
+#       value: /var/data/solarshield.db
+#     - key: UPLOADS_DIR
+#       value: /var/data/images
+#
+#   disk:
+#     name: solarshield-data
+#     mountPath: /var/data
+#     sizeGB: 1
